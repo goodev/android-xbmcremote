@@ -90,6 +90,6 @@ public class MediaControl {
 	}
 	
 	public boolean navSelect() {
-		return instance.executeBooleanResponseCommand("Action", "2");
+		return instance.executeBooleanResponseCommand("Action", "7");
 	}
 }
