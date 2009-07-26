@@ -85,7 +85,7 @@ public class HomeActivity extends Activity {
 	    
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		String host = settings.getString("host", "");
-		XBMCControl.createInstance(new XBMC(host, 8080));
+		XBMCControl.createInstance(new XBMC(host));
 		
 		final EditText HostText = (EditText) findViewById(R.id.HostText);
 		HostText.setText(host);
@@ -98,7 +98,7 @@ public class HomeActivity extends Activity {
 		final EditText HostText = (EditText) findViewById(R.id.HostText);
 		String host = HostText.getText().toString();
 
-		XBMCControl.createInstance(new XBMC(host, 8080));
+		XBMCControl.createInstance(new XBMC(host));
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString("host", host);
