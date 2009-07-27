@@ -22,7 +22,6 @@
 package org.xbmc.httpapi;
 
 import java.util.ArrayList;
-import java.util.List;
 
 abstract class Database {
 	HttpApiConnection instance;
@@ -33,10 +32,10 @@ abstract class Database {
 		this.queryString = queryString;
 	}
 
-	protected List<DatabaseItem> getMergedList(String nameID, String sqlQuery) {
-		List<String> list = instance.getList(queryString, sqlQuery);
+	protected ArrayList<DatabaseItem> getMergedList(String nameID, String sqlQuery) {
+		ArrayList<String> list = instance.getList(queryString, sqlQuery);
 		
-		List<DatabaseItem> returnList = new ArrayList<DatabaseItem>();
+		ArrayList<DatabaseItem> returnList = new ArrayList<DatabaseItem>();
 		
 		for (String s : list) {
 			if (s.startsWith("<field>")) {

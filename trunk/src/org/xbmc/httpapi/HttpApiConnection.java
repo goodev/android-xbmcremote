@@ -30,14 +30,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.PriorityQueue;
 
 class HttpApiConnection {
 	private String baseURL;
-	private Queue<Message> messenger;
+	private PriorityQueue<Message> messenger;
 	
-	public HttpApiConnection(String host, int port, String username, String password, Queue<Message> messenger) {
+	public HttpApiConnection(String host, int port, String username, String password, PriorityQueue<Message> messenger) {
 		baseURL = "http://";
 		if (username != null) {
 			baseURL += username + (password != null ? ":" + password : "") + "@";
@@ -55,7 +54,7 @@ class HttpApiConnection {
 		return new URL(baseURL + "/xbmcCmds/xbmcHttp?command=" + method + "(" + encodedParameter + ")");
 	}
 	
-	public List<String> getList(String method, String parameter) {
+	public ArrayList<String> getList(String method, String parameter) {
 		try {
 			String response = executeCommand(method, parameter);
 			System.out.println("<response>\n" + response + "\n</response>");
@@ -65,7 +64,7 @@ class HttpApiConnection {
 		}
 	}
 	
-	private List<String> parseList(String response) {
+	private ArrayList<String> parseList(String response) {
 		if (response == null || response.length() == 0 || response.contains("Error")) {
 			messenger.offer(new Message(UrgancyLevel.error, "ERROR in response"));
 			return new ArrayList<String>();
@@ -96,7 +95,7 @@ class HttpApiConnection {
 	}
 	
 	public String getString(String method, String parameter) {
-		List<String> stringList = getList(method, parameter);
+		ArrayList<String> stringList = getList(method, parameter);
 		
 		return stringList.size() > 0 ? stringList.get(0) : "";
 	}

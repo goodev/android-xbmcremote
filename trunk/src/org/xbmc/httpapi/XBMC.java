@@ -22,14 +22,12 @@
 package org.xbmc.httpapi;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Queue;
 
 
 public class XBMC {
 	HttpApiConnection instance;
-	Queue<Message> messenger;
+	PriorityQueue<Message> messenger;
 	
 	public XBMC(String host) {
 		this(host, -1, null, null);
@@ -48,9 +46,9 @@ public class XBMC {
 		instance = new HttpApiConnection(host, port, username, password, messenger);
 	}
 	
-	public List<Item> getShares(MediaType type) {
-		List<String> stringList = instance.getList("GetShares", type.toString());
-		List<Item> returnList = new ArrayList<Item>();
+	public ArrayList<Item> getShares(MediaType type) {
+		ArrayList<String> stringList = instance.getList("GetShares", type.toString());
+		ArrayList<Item> returnList = new ArrayList<Item>();
 		for (String share : stringList) {
 			String[] sl = share.split(";");
 			if (sl.length < 2)
@@ -61,18 +59,18 @@ public class XBMC {
 		return returnList;
 	}
 	
-	public List<String> getDirectory(String path, Mask mask) {
+	public ArrayList<String> getDirectory(String path, Mask mask) {
 		if (mask.equals(Mask.All))
 			return getDirectory(path);
 		else
 			return getDirectory(path, mask.toString());
 	}
 	
-	public List<String> getDirectory(String path) {
+	public ArrayList<String> getDirectory(String path) {
 		return instance.getList("getDirectory", path);
 	}
 	
-	public List<String> getDirectory(String path, String mask) {
+	public ArrayList<String> getDirectory(String path, String mask) {
 		return instance.getList("getDirectory", path + ";" + mask);
 	}
 	
@@ -96,7 +94,7 @@ public class XBMC {
 		return instance.isAvailable();
 	}
 
-	public Queue<Message> getMessenger() {
+	public PriorityQueue<Message> getMessenger() {
 		return messenger;
 	}
 	

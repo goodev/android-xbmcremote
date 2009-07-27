@@ -21,11 +21,11 @@
 
 package org.xbmc.httpapi;
 
-import java.util.List;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 public class VideoDatabase extends Database {
-	protected VideoDatabase(HttpApiConnection instance, Queue<Message> messenger) {
+	protected VideoDatabase(HttpApiConnection instance, PriorityQueue<Message> messenger) {
 		super(instance, "QueryVideoDatabase");
 	}
 	
@@ -33,7 +33,7 @@ public class VideoDatabase extends Database {
 	 * Get all TVShows in database
 	 * @return list of TV Show names
 	 */
-	public List<DatabaseItem> getTVShows() {
+	public ArrayList<DatabaseItem> getTVShows() {
 		return getMergedList("idShow", "SELECT idShow, c00 from tvshow ORDER BY c00");
 	}
 	
@@ -41,7 +41,7 @@ public class VideoDatabase extends Database {
 	 * Get all Movies in database
 	 * @return list of Movie names
 	 */
-	public List<DatabaseItem> getMovies() {
+	public ArrayList<DatabaseItem> getMovies() {
 		return getMergedList("idMovie", "SELECT idMovie, c00 from movie ORDER BY c00");
 	}
 }

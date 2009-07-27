@@ -21,12 +21,12 @@
 
 package org.xbmc.httpapi;
 
-import java.util.List;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 public class MusicDatabase extends Database {
 
-	protected MusicDatabase(HttpApiConnection instance, Queue<Message> messenger) {
+	protected MusicDatabase(HttpApiConnection instance, PriorityQueue<Message> messenger) {
 		super(instance, "QueryMusicDatabase");
 	}
 	
@@ -36,7 +36,7 @@ public class MusicDatabase extends Database {
 	 * @param like
 	 * @return list of artist names
 	 */
-	public List<DatabaseItem> getArtists(String like) {
+	public ArrayList<DatabaseItem> getArtists(String like) {
 		 return getMergedList("idArtist", "SELECT idAlbum, strAlbum FROM artist WHERE strArtist LIKE %%" + like + "%%" + " ORDER BY strArtist");
 	}
 
@@ -44,7 +44,7 @@ public class MusicDatabase extends Database {
 	 * Get all artists available in the database
 	 * @return list of artist names
 	 */
-	public List<DatabaseItem> getArtists() {
+	public ArrayList<DatabaseItem> getArtists() {
 		return getMergedList("idArtist", "SELECT idArtist, strArtist FROM artist ORDER BY strArtist");
 	}
 	
@@ -53,7 +53,7 @@ public class MusicDatabase extends Database {
 	 * @param artist
 	 * @return list of album names
 	 */
-	public List<DatabaseItem> getAlbums(DatabaseItem root) {
+	public ArrayList<DatabaseItem> getAlbums(DatabaseItem root) {
 		return getMergedList("idAlbum", "SELECT idAlbum, strAlbum from album WHERE " + root.formatSQL() + " ORDER BY strAlbum");
 	}
 	
@@ -61,7 +61,7 @@ public class MusicDatabase extends Database {
 	 * Get all albums in database
 	 * @return list of album names
 	 */
-	public List<DatabaseItem> getAlbums() {
+	public ArrayList<DatabaseItem> getAlbums() {
 		return getMergedList("idAlbum", "SELECT idAlbum, strAlbum from album ORDER BY strAlbum");
 	}
 	
@@ -70,7 +70,7 @@ public class MusicDatabase extends Database {
 	 * @param artist
 	 * @return list of song names
 	 */
-	public List<DatabaseItem> getSongs(DatabaseItem root) {
+	public ArrayList<DatabaseItem> getSongs(DatabaseItem root) {
 		return getMergedList("idSong", "SELECT idSong, strTitle from song WHERE " + root.formatSQL() + " ORDER BY iTrack");
 	}
 	
@@ -78,7 +78,7 @@ public class MusicDatabase extends Database {
 	 * Get all songs in database
 	 * @return list of song names
 	 */
-	public List<DatabaseItem> getSongs() {
+	public ArrayList<DatabaseItem> getSongs() {
 		return getMergedList("idSong", "SELECT idSong, strTitle from song ORDER BY iTrack");
 	}
 }
