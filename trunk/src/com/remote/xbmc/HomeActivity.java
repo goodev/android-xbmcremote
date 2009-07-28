@@ -33,8 +33,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class HomeActivity extends Activity {
-	public static final String PREFS_NAME = "XBMCRemotePrefsFile";
-
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,23 +81,22 @@ public class HomeActivity extends Activity {
 			}
 		});
 	    
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		SharedPreferences settings = getSharedPreferences(XBMCControl.PREFS_NAME, 0);
 		String host = settings.getString("host", "");
-		XBMCControl.createInstance(new XBMC(host));
 		
 		final EditText HostText = (EditText) findViewById(R.id.HostText);
 		HostText.setText(host);
 	}
 	
 	@Override
-	protected void onStop() {
+	protected void onPause() {
 		super.onStop();
 		
 		final EditText HostText = (EditText) findViewById(R.id.HostText);
 		String host = HostText.getText().toString();
 
 		XBMCControl.createInstance(new XBMC(host));
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		SharedPreferences settings = getSharedPreferences(XBMCControl.PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString("host", host);
 		

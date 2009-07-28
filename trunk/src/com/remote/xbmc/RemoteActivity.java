@@ -35,7 +35,7 @@ public class RemoteActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.remotemain);
 
-  	  	control = XBMCControl.getInstance().getMediaControls();
+  	  	control = XBMCControl.getInstance(getSharedPreferences(XBMCControl.PREFS_NAME, 0)).getMediaControls();
   	  	
 		setupMediaControlButtons();
 		setupNavButtons();

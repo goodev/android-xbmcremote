@@ -22,11 +22,19 @@
 package com.remote.xbmc;
 
 import org.xbmc.httpapi.XBMC;
+import android.content.SharedPreferences;
 
 public class XBMCControl {
 	private static XBMC instance;
 	
-	static public XBMC getInstance() {
+	public static final String PREFS_NAME = "XBMCRemotePrefsFile";
+	
+	static public XBMC getInstance(SharedPreferences settings) {
+		if (instance == null)
+		{
+			String host = settings.getString("host", "");
+			instance = new XBMC(host);
+		}
 		return instance;
 	}
 

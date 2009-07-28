@@ -35,8 +35,8 @@ public class NowPlayingActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nowplaying);
-
-  	  	control = XBMCControl.getInstance().getMediaControls();
+        
+  	  	control = XBMCControl.getInstance(getSharedPreferences(XBMCControl.PREFS_NAME, 0)).getMediaControls();
   	  	
   	  	final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
   	  	int progress = control.getPercentage();
