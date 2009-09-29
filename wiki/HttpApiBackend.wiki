@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Class overview of the HTTP API
 #labels Phase-Implementation
 
 = How we use the threads =
