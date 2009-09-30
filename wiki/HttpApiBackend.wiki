@@ -12,5 +12,6 @@ Obviously we can‘t just implement the API comands as methods with their return
 The four wrapper classes the {{{HttpApiThread}}} holds contain the wrapper methods to the real HTTP API clients.
 
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Code/Diagrams/HttpAPI.png
+Click [http://android-xbmcremote.googlecode.com/svn/trunk/Graphics/Diagrams/HttpAPI.pdf here] for the PDF version.
 
 That's what we decided based on our limited Android experience. If you're an experienced developer and know better, please let us know via the [http://xbmc.org/forum/showthread.php?t=55346 forum] or the [http://code.google.com/p/android-xbmcremote/issues/list issue tracker]. :)
