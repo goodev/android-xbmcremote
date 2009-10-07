@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
+import org.xbmc.android.guilogic.AlbumListLogic;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.WakeOnLan;
@@ -55,6 +56,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class HomeActivity extends Activity implements OnItemClickListener {
+
 	private static final int HOME_ACTION_REMOTE = 0;
 	private static final int HOME_ACTION_MUSIC = 1;
 	private static final int HOME_ACTION_VIDEOS = 2;
@@ -154,8 +156,8 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			break;
 		case HOME_ACTION_MUSIC:
 //			startActivityForResult(createMediaIntent(MediaType.music, v), 0);
-//			startActivityForResult(createMusicIntent(ListType.albums, v), 0);
-			startActivityForResult(new Intent(v.getContext(), MediaTabContainerActivity.class), 0);
+			startActivityForResult(createMusicIntent(ListType.albums, v), 0);
+//			startActivityForResult(new Intent(v.getContext(), MediaTabContainerActivity.class), 0);
 			break;
 		case HOME_ACTION_VIDEOS:
 			startActivityForResult(createMediaIntent(MediaType.video, v), 0);
@@ -209,8 +211,8 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	}
 	
 	private Intent createMusicIntent(ListType listType, View v) {
-		Intent myIntent = new Intent(v.getContext(), MusicListActivity.class);
-		myIntent.putExtra(MusicListActivity.EXTRA_LIST_TYPE, listType.toString());
+		Intent myIntent = new Intent(v.getContext(), MusicLibraryActivity.class);
+		myIntent.putExtra(AlbumListLogic.EXTRA_LIST_TYPE, listType.toString());
 		return myIntent;
 	}
 

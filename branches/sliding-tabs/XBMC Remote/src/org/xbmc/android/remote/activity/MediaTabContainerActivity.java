@@ -1,5 +1,6 @@
 package org.xbmc.android.remote.activity;
 
+import org.xbmc.android.guilogic.AlbumListLogic;
 import org.xbmc.httpapi.type.ListType;
 import org.xbmc.httpapi.type.MediaType;
 
@@ -38,12 +39,12 @@ public class MediaTabContainerActivity extends TabActivity {
 	}
 	
 	private Intent createMusicIntent(ListType listType, Context c) {
-		Intent nextActivity = new Intent(c, MusicListActivity.class);
+		Intent nextActivity = new Intent(c, MusicLibraryActivity.class);
 		Bundle extras = getIntent().getExtras();
 		if (extras != null)
 			nextActivity.putExtras(extras);
-		if (nextActivity.getStringExtra(MusicListActivity.EXTRA_LIST_TYPE) == null)
-			nextActivity.putExtra(MusicListActivity.EXTRA_LIST_TYPE, listType.toString());
+		if (nextActivity.getStringExtra(AlbumListLogic.EXTRA_LIST_TYPE) == null)
+			nextActivity.putExtra(AlbumListLogic.EXTRA_LIST_TYPE, listType.toString());
 		nextActivity.putExtra("activeTab", "albums");
 		return nextActivity;
 	}

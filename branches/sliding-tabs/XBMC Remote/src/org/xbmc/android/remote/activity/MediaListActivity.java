@@ -49,8 +49,8 @@ public class MediaListActivity extends ListActivity {
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
 	
-	private HashMap<String, MediaLocation> fileItems;
-	private volatile String gettingUrl;
+	private HashMap<String, MediaLocation> mFileItems;
+	private volatile String mGettingUrl;
 	private MediaType mMediaType;
 	
 	@Override
@@ -66,10 +66,10 @@ public class MediaListActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, final View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		if (fileItems == null)
+		if (mFileItems == null)
 			return;
 
-		MediaLocation item = fileItems.get(l.getAdapter().getItem(position));
+		MediaLocation item = mFileItems.get(l.getAdapter().getItem(position));
 		if (item.isDirectory) {
 			Intent nextActivity = new Intent(this, MediaTabContainerActivity.class);
 			nextActivity.putExtras(getIntent().getExtras());
@@ -88,32 +88,32 @@ public class MediaListActivity extends ListActivity {
 	}
 
 	private void fillUp(String url) {
-		if (gettingUrl != null)
+		if (mGettingUrl != null)
 			return;
 		
-		gettingUrl = url;
-		fileItems = null;
+		mGettingUrl = url;
+		mFileItems = null;
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{ "Loading..." }));
 		getListView().setTextFilterEnabled(false);
 		
 		HttpApiHandler<ArrayList<MediaLocation>> mediaListHandler = new HttpApiHandler<ArrayList<MediaLocation>>(this) {
 			public void run() {
 				ArrayList<String> presentationList = new ArrayList<String>();
-				fileItems = new HashMap<String, MediaLocation>();
+				mFileItems = new HashMap<String, MediaLocation>();
 				
 				for (MediaLocation item : value) {
 					presentationList.add(item.name);
-					fileItems.put(item.name, item);
+					mFileItems.put(item.name, item);
 				}
 				setListAdapter(new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, presentationList));
 				getListView().setTextFilterEnabled(true);
 			}
 		};
 		
-		if (gettingUrl.length() == 0) {
+		if (mGettingUrl.length() == 0) {
 			HttpApiThread.info().getShares(mediaListHandler, mMediaType);
 		} else {
-			HttpApiThread.info().getDirectory(mediaListHandler, gettingUrl);
+			HttpApiThread.info().getDirectory(mediaListHandler, mGettingUrl);
 		}
 	}
 	
