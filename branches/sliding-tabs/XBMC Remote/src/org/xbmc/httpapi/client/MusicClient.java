@@ -77,6 +77,23 @@ public class MusicClient {
 		}
 		return firstSong;
 	}
+
+	/**
+	 * Adds all songs from an artist to the current playlist.
+	 * @param artist
+	 * @return first song of all added songs
+	 */
+	public Song addToPlaylist(Artist artist) {
+		final ArrayList<Song> songs = getSongs(artist);
+		Song firstSong = null;
+		for (Song song : songs) {
+			if (firstSong == null) {
+				firstSong = song;
+			}
+			addToPlaylist(song);
+		}
+		return firstSong;
+	}
 	
 	/**
 	 * Adds a song to the current playlist.
@@ -110,6 +127,25 @@ public class MusicClient {
 	 */
 	public boolean play(Album album) {
 		final ArrayList<Song> songs = getSongs(album);
+		clearPlaylist();
+		int n = 0;
+		for (Song song : songs) {
+			addToPlaylist(song);
+			if (n == 0) {
+				play(song);
+			}
+			n++;
+		}
+		return true;
+	}
+	
+	/**
+	 * Plays all songs from an artist. Playlist is previously cleared.
+	 * @param artist
+	 * @return true on success, false otherwise.
+	 */
+	public boolean play(Artist artist) {
+		final ArrayList<Song> songs = getSongs(artist);
 		clearPlaylist();
 		int n = 0;
 		for (Song song : songs) {
@@ -202,7 +238,7 @@ public class MusicClient {
 	}
 	
 	/**
-	 * Returns a list containing all tracks of an artist. The list is sorted by filename.
+	 * Returns a list containing all tracks of an artist. The list is sorted by album name, filename.
 	 * @param artist Arist
 	 * @return All tracks of the artist
 	 */

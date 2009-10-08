@@ -99,19 +99,26 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
-/*		switch (mTabHost.getCurrentTab()) {
+		switch (mTabHost.getCurrentTab()) {
 			case 0:
+				mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
 				break;
-		}*/
+			case 2:
+				mArtistLogic.onCreateContextMenu(menu, v, menuInfo);
+				break;
+		}
 	}
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		mAlbumLogic.onContextItemSelected(item);
-/*		switch (mTabHost.getCurrentTab()) {
+		switch (mTabHost.getCurrentTab()) {
 		case 0:
-		}*/
+			mAlbumLogic.onContextItemSelected(item);
+			break;
+		case 2:
+			mArtistLogic.onContextItemSelected(item);
+			break;
+		}
 		return super.onContextItemSelected(item);
 	}
 	

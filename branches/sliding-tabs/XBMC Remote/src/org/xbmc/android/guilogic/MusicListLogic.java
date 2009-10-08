@@ -116,7 +116,7 @@ public class MusicListLogic extends ListLogic {
 				}
 			});
 					
-			// depending on list type, fetch albums or songs
+			// depending on list type, fetch albums or songs, artists, etc
 			switch (mListType) {
 				case albums:
 					if (mArtist == null) {
@@ -175,18 +175,26 @@ public class MusicListLogic extends ListLogic {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + mListType.getSingular());
-		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + mListType.getSingular());
 		String title = "";
 		switch (mListType) {
 			case albums:
+				menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + mListType.getSingular());
+				menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + mListType.getSingular());
 				final Album album = (Album)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 				title = album.name;
 				menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
 				break;
 			case songs:
+				menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + mListType.getSingular());
+				menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + mListType.getSingular());
 				final Song song = (Song)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 				title = song.title;
+				break;
+			case artists:
+				menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue all songs from " + mListType.getSingular());
+				menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play all songs from " + mListType.getSingular());
+				final Artist artist = (Artist)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+				title = artist.name;
 				break;
 		}
 		menu.setHeaderTitle(title);
@@ -223,12 +231,23 @@ public class MusicListLogic extends ListLogic {
 					case ITEM_CONTEXT_PLAY:
 						HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), song);
 						break;
-					case ITEM_CONTEXT_INFO:
-						break;
 					default:
 						return;
 				}
 			break;
+			case artists:
+				final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+				switch (item.getItemId()) {
+				case ITEM_CONTEXT_QUEUE:
+					HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), artist);
+					break;
+				case ITEM_CONTEXT_PLAY:
+					HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), artist);
+					break;
+				default:
+					return;
+				}
+				break;
 		}
 		return;
 	}
