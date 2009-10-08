@@ -27,6 +27,7 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
+import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.android.remote.activity.MusicLibraryActivity;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Song;
@@ -81,8 +82,9 @@ public class AlbumListLogic extends ListLogic {
 					switch (mListType) {
 						case albums:
 							Album album = (Album)view.getTag();
-							nextActivity = new Intent(view.getContext(), MusicLibraryActivity.class);
+							nextActivity = new Intent(view.getContext(), ListActivity.class);
 							nextActivity.putExtras(mActivity.getIntent().getExtras());
+							nextActivity.putExtra(ListActivity.EXTRA_LOGIC_TYPE, ListLogic.LOGIC_ALBUM);
 							nextActivity.putExtra(EXTRA_LIST_TYPE, ListType.songs.toString());
 							nextActivity.putExtra(EXTRA_ALBUM, album);
 							mActivity.startActivity(nextActivity);
@@ -200,6 +202,11 @@ public class AlbumListLogic extends ListLogic {
 			final TextView subtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubtitle);
 			final TextView subsubtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
+			if (position == getCount() - 1) {
+				row.setBackgroundResource(R.drawable.back_bottom_rounded);
+			} else {
+				row.setBackgroundColor(0xfff8f8f8);
+			}			
 			title.setText(album.name);
 			subtitle.setText(album.artist);
 			subsubtitle.setText(album.year > 0 ? String.valueOf(album.year) : "");
@@ -239,6 +246,11 @@ public class AlbumListLogic extends ListLogic {
 			final TextView subtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubtitle);
 			final TextView subsubtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
+			if (position == getCount() - 1) {
+				row.setBackgroundResource(R.drawable.back_bottom_rounded);
+			} else {
+				row.setBackgroundColor(0xfff8f8f8);
+			}			
 			title.setText(song.track + " " + song.title);
 			subtitle.setText(song.artist);
 			subsubtitle.setText(song.getDuration());

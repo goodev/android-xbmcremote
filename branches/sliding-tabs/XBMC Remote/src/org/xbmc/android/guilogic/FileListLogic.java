@@ -117,7 +117,7 @@ public class FileListLogic extends ListLogic {
 			row.setTag(fileItem);
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-			if (position == mFileItems.size() - 1) {
+			if (position == getCount() - 1) {
 				row.setBackgroundResource(R.drawable.back_bottom_rounded);
 			} else {
 				row.setBackgroundColor(0xfff8f8f8);

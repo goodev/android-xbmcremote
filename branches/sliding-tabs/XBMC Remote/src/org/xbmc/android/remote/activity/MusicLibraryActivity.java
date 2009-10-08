@@ -30,6 +30,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
+import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
@@ -64,6 +65,19 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("musictab4", "Playlists", R.drawable.st_playlist_on, R.drawable.st_playlist_off).setBigIcon(R.drawable.st_playlist_over).setContent(R.id.textview3));
 
 		mTabHost.setCurrentTab(0);
+		
+		
+		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
+			public void onTabChanged(String tabId) {
+				if (tabId.equals("musictab1")) {
+					mAlbumLogic.onCreate();
+				}
+				if (tabId.equals("musictab2")) {
+					mFileLogic.onCreate();
+				}
+				
+			}
+		});
 
 		mAlbumLogic = new AlbumListLogic(this, (ListView)findViewById(R.id.albumlist_list));
 		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
@@ -71,7 +85,6 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
 		
 		mAlbumLogic.onCreate();
-		mFileLogic.onCreate();
 	}
 	
 	@Override
