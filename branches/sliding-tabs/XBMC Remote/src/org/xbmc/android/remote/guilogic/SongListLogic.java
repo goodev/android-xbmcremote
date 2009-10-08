@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.guilogic;
+package org.xbmc.android.remote.guilogic;
 
 import java.util.ArrayList;
 
