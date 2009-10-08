@@ -41,6 +41,15 @@
 					android:id="@+id/filelist_list"></ListView>
 			</LinearLayout>
 			
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:id="@+id/artists_outer_layout" android:orientation="vertical"
+				android:fadingEdge="none">
+				<include layout="@layout/titlebar" />
+				<ListView android:layout_height="fill_parent"
+					android:layout_width="fill_parent" android:fadingEdge="none"
+					android:id="@+id/artists_list"></ListView>
+			</LinearLayout>
             <TextView 
                 android:id="@+id/textview3"
                 android:layout_width="fill_parent"

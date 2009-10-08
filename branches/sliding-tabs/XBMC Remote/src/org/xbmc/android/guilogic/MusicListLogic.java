@@ -28,8 +28,9 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
-import org.xbmc.android.remote.activity.MusicLibraryActivity;
+import org.xbmc.android.remote.activity.MusicArtistActivity;
 import org.xbmc.httpapi.data.Album;
+import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ListType;
 import org.xbmc.httpapi.type.ThumbSize;
@@ -51,7 +52,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class AlbumListLogic extends ListLogic {
+public class MusicListLogic extends ListLogic {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
@@ -59,20 +60,30 @@ public class AlbumListLogic extends ListLogic {
 	
 	public static final String EXTRA_LIST_TYPE = "listType"; 
 	public static final String EXTRA_ALBUM = "album"; 
+	public static final String EXTRA_ARTIST = "artist"; 
 
 	private ListType mListType;
 	private Album mAlbum;
+	private Artist mArtist;
 	
-	public AlbumListLogic(Activity activity, ListView list) {
+	public MusicListLogic(Activity activity, ListView list) {
 		super(activity, list);
 	}
 	
+	public void setType(ListType type) {
+		mListType = type;
+	}
 	
 	public void onCreate() {
 		if (!isCreated()) {
-			final String mt = mActivity.getIntent().getStringExtra(EXTRA_LIST_TYPE);
-			mListType = mt != null ? ListType.valueOf(mt) : ListType.albums;
+			
+			if (mListType == null) {
+				final String mt = mActivity.getIntent().getStringExtra(EXTRA_LIST_TYPE);
+				mListType = mt != null ? ListType.valueOf(mt) : ListType.albums;
+			}
+			
 			mAlbum = (Album)mActivity.getIntent().getSerializableExtra(EXTRA_ALBUM);
+			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(EXTRA_ARTIST);
 			
 			mActivity.registerForContextMenu(mList);
 			
@@ -93,6 +104,14 @@ public class AlbumListLogic extends ListLogic {
 							Song song = (Song)view.getTag();
 							HttpApiThread.music().play(new HttpApiHandler<Boolean>((Activity)view.getContext()), song);
 						break;
+						case artists:
+							Artist artist = (Artist)view.getTag();
+							nextActivity = new Intent(view.getContext(), MusicArtistActivity.class);
+							nextActivity.putExtras(mActivity.getIntent().getExtras());
+							nextActivity.putExtra(ListActivity.EXTRA_LOGIC_TYPE, ListLogic.LOGIC_ALBUM);
+							nextActivity.putExtra(EXTRA_ARTIST, artist);
+							mActivity.startActivity(nextActivity);
+							break;
 					}
 				}
 			});
@@ -100,17 +119,27 @@ public class AlbumListLogic extends ListLogic {
 			// depending on list type, fetch albums or songs
 			switch (mListType) {
 				case albums:
-					setTitle("Albums...");
-					HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
-						public void run() {
-							setTitle("Albums (" + value.size() + ")");
-							mList.setAdapter(new AlbumAdapter(mActivity, value));
-						}
-					});
+					if (mArtist == null) {
+						setTitle("Albums...");
+						HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+							public void run() {
+								setTitle("Albums (" + value.size() + ")");
+								mList.setAdapter(new AlbumAdapter(mActivity, value));
+							}
+						});
+					} else {
+						setTitle(mArtist.name + " - Albums...");
+						HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+							public void run() {
+								setTitle(mArtist.name + " - Albums (" + value.size() + ")");
+								mList.setAdapter(new AlbumAdapter(mActivity, value));
+							}
+						}, mArtist);
+					}
 					break;
 				case songs:
-					setTitle("Songs...");
 					if (mAlbum != null) {
+						setTitle("Songs...");
 						HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
 							public void run() {
 								setTitle(mAlbum.name);
@@ -118,6 +147,24 @@ public class AlbumListLogic extends ListLogic {
 							}
 						}, mAlbum);
 					}
+					if (mArtist != null) {
+						setTitle(mArtist.name + " - Songs...");
+						HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
+							public void run() {
+								setTitle(mArtist.name + " - Songs (" + value.size() + ")");
+								mList.setAdapter(new SongAdapter(mActivity, value));
+							}
+						}, mArtist);
+					}
+					break;
+				case artists:
+					setTitle("Artists...");
+					HttpApiThread.music().getArtists(new HttpApiHandler<ArrayList<Artist>>(mActivity) {
+						public void run() {
+							setTitle("Artists (" + value.size() + ")");
+							mList.setAdapter(new ArtistAdapter(mActivity, value));
+						}
+					});
 					break;
 				default:
 					break;
@@ -268,4 +315,30 @@ public class AlbumListLogic extends ListLogic {
 		}
 	}
 	
+	private class ArtistAdapter extends ArrayAdapter<Artist> {
+		private Activity mActivity;
+		ArtistAdapter(Activity activity, ArrayList<Artist> items) {
+			super(activity, R.layout.listitem_oneliner, items);
+			mActivity = activity;
+		}
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View row;
+			if (convertView == null) {
+				LayoutInflater inflater = mActivity.getLayoutInflater();
+				row = inflater.inflate(R.layout.listitem_oneliner, null);
+			} else {
+				row = convertView;
+			}
+			final Artist artist = this.getItem(position);
+			row.setTag(artist);
+			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
+			if (position == getCount() - 1) {
+				row.setBackgroundResource(R.drawable.back_bottom_rounded);
+			} else {
+				row.setBackgroundColor(0xfff8f8f8);
+			}			
+			title.setText(artist.name);
+			return row;
+		}
+	}
 }

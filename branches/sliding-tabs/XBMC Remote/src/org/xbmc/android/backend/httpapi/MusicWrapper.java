@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.Album;
+import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -60,6 +61,20 @@ public class MusicWrapper extends Wrapper {
 	}
 	
 	/**
+	 * Gets all albums of an artist from database
+	 * @param handler Callback handler
+	 * @param artist  Artist of the albums
+	 */
+	public void getAlbums(final HttpApiHandler<ArrayList<Album>> handler, final Artist artist) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getAlbums(artist);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
 	 * Gets all songs of an album from database
 	 * @param handler Callback handler
 	 * @param album The album
@@ -68,6 +83,33 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = music(handler).getSongs(album);
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Gets all songs from an artist from database
+	 * @param handler Callback handler
+	 * @param album The artist
+	 */
+	public void getSongs(final HttpApiHandler<ArrayList<Song>> handler, final Artist artist) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getSongs(artist);
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Gets all artists from database
+	 * @param handler Callback handler
+	 */
+	public void getArtists(final HttpApiHandler<ArrayList<Artist>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getArtists();
 				done(handler);
 			}
 		});

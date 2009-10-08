@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
-import org.xbmc.android.guilogic.AlbumListLogic;
+import org.xbmc.android.guilogic.MusicListLogic;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.WakeOnLan;
@@ -212,7 +212,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	
 	private Intent createMusicIntent(ListType listType, View v) {
 		Intent myIntent = new Intent(v.getContext(), MusicLibraryActivity.class);
-		myIntent.putExtra(AlbumListLogic.EXTRA_LIST_TYPE, listType.toString());
+		myIntent.putExtra(MusicListLogic.EXTRA_LIST_TYPE, listType.toString());
 		return myIntent;
 	}
 

@@ -27,7 +27,7 @@ public abstract class ListLogic {
 	public static ListLogic factory(int logicType, Activity activity, ListView list) {
 		switch (logicType) {
 		case LOGIC_ALBUM:
-			return new AlbumListLogic(activity, list);
+			return new MusicListLogic(activity, list);
 		case LOGIC_FILELIST:
 			return new FileListLogic(activity, list);
 		}

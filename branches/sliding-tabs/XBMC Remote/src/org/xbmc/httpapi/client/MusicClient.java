@@ -26,6 +26,7 @@ import java.util.Collections;
 
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.data.Album;
+import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 
@@ -143,6 +144,28 @@ public class MusicClient {
 		sb.append("  LIMIT 300"); // let's keep it at 300 for now
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
+
+	/**
+	 * Get all albums of an artist from database
+	 * @return All albums
+	 */
+	public ArrayList<Album> getAlbums(Artist artist) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear");
+		sb.append("  FROM album AS a, artist AS i");
+		sb.append("  WHERE a.idArtist = i.idArtist");
+		sb.append("  AND i.idArtist = " + artist.id);
+		sb.append("  ORDER BY a.strAlbum ASC");
+		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Get all albums from database
+	 * @return All albums
+	 */
+	public ArrayList<Artist> getArtists() {
+		return parseArtists(mConnection.query("QueryMusicDatabase", "SELECT idArtist, strArtist FROM artist ORDER BY strArtist"));
+	}
 	
 	/**
 	 * Updates the album object with additional data from the albuminfo table
@@ -171,6 +194,22 @@ public class MusicClient {
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = a.idArtist");
 		sb.append("  AND s.idAlbum = " + album.id);
+		sb.append("  ORDER BY s.iTrack, s.strFileName");
+		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Returns a list containing all tracks of an artist. The list is sorted by filename.
+	 * @param artist Arist
+	 * @return All tracks of the artist
+	 */
+	public ArrayList<Song> getSongs(Artist artist) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT s.strTitle, a.StrArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist a");
+		sb.append("  WHERE s.idPath = p.idPath");
+		sb.append("  AND s.idArtist = a.idArtist");
+		sb.append("  AND s.idArtist = " + artist.id);
 		sb.append("  ORDER BY s.iTrack, s.strFileName");
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
@@ -278,5 +317,31 @@ public class MusicClient {
 		}
 		Collections.sort(songs);
 		return songs;		
+	}
+	
+	/**
+	 * Converts query response from HTTP API to a list of Artist objects. Each
+	 * row must return the following columns in the following order:
+	 * <ol>
+	 * 	<li><code>idArtist</code></li>
+	 * 	<li><code>strArtist</code></li>
+	 * </ol>
+	 * @param response
+	 * @return List of Songs
+	 */
+	private ArrayList<Artist> parseArtists(String response) {
+		ArrayList<Artist> artists = new ArrayList<Artist>();
+		String[] fields = response.split("<field>");
+		try { 
+			for (int row = 1; row < fields.length; row += 2) { 
+				artists.add(new Artist(
+						Connection.trimInt(fields[row]), 
+						Connection.trim(fields[row + 1])
+				));
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+		}
+		return artists;		
 	}
 }
