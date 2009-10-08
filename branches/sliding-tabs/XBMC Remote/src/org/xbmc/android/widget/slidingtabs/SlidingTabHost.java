@@ -62,7 +62,7 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 	 */
 	protected LocalActivityManager mLocalActivityManager = null;
 	private OnTabChangeListener mOnTabChangeListener;
-	private OnKeyListener mTabKeyListener;
+//	private OnKeyListener mTabKeyListener;
 
 	public SlidingTabHost(Context context) {
 		super(context);
@@ -114,7 +114,7 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 
 		// KeyListener to attach to all tabs. Detects non-navigation keys
 		// and relays them to the tab content.
-		mTabKeyListener = new OnKeyListener() {
+/*		mTabKeyListener = new OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				switch (keyCode) {
 				case KeyEvent.KEYCODE_DPAD_CENTER:
@@ -130,7 +130,7 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 				return mTabContent.dispatchKeyEvent(event);
 			}
 
-		};
+		};*/
 
 		mTabWidget.setTabSelectionListener(new SlidingTabWidget.OnTabSelectionChanged() {
 			public void onTabSelectionChanged(int tabIndex, boolean clicked) {

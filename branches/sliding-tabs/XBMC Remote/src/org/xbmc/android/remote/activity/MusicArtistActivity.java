@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.guilogic.AlbumListLogic;
-import org.xbmc.android.remote.guilogic.ListLogic;
 import org.xbmc.android.remote.guilogic.SongListLogic;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
