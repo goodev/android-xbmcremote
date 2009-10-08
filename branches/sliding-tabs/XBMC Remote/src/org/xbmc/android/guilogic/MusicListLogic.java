@@ -298,19 +298,27 @@ public class MusicListLogic extends ListLogic {
 			} else {
 				row.setBackgroundColor(0xfff8f8f8);
 			}			
-			title.setText(song.track + " " + song.title);
-			subtitle.setText(song.artist);
+			title.setText(song.title);
+//			title.setText(song.track + " " + song.title);
 			subsubtitle.setText(song.getDuration());
 			
-			HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, mAlbum) {
-				public void run() {
-					if (value == null) {
-						icon.setImageResource(R.drawable.home_music);
-					} else {
-						icon.setImageBitmap(value);
+			
+			if (mAlbum != null) {
+				subtitle.setText(song.artist);
+				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, mAlbum) {
+					public void run() {
+						if (value == null) {
+							icon.setImageResource(R.drawable.home_music);
+						} else {
+							icon.setImageBitmap(value);
+						}
 					}
-				}
-			}, mAlbum, ThumbSize.small);
+				}, mAlbum, ThumbSize.small);
+			}
+			
+			if (mArtist != null) {
+				subtitle.setText(song.album);
+			}
 			return row;
 		}
 	}

@@ -151,10 +151,12 @@ public class MusicClient {
 	 */
 	public ArrayList<Album> getAlbums(Artist artist) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear");
-		sb.append("  FROM album AS a, artist AS i");
-		sb.append("  WHERE a.idArtist = i.idArtist");
-		sb.append("  AND i.idArtist = " + artist.id);
+		
+		sb.append("SELECT DISTINCT a.idAlbum, a.strAlbum, i.strArtist, a.iYear");
+		sb.append("  FROM song AS s, album AS a, artist as i");
+		sb.append("  WHERE s.idArtist = " + artist.id);
+		sb.append("  AND s.idAlbum = a.idAlbum");
+		sb.append("  AND i.idArtist = s.idArtist");
 		sb.append("  ORDER BY a.strAlbum ASC");
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
@@ -189,10 +191,11 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Album album) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, a.StrArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist a");
+		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist AS art, album AS alb");
 		sb.append("  WHERE s.idPath = p.idPath");
-		sb.append("  AND s.idArtist = a.idArtist");
+		sb.append("  AND s.idArtist = art.idArtist");
+		sb.append("  AND s.idAlbum = alb.idAlbum");
 		sb.append("  AND s.idAlbum = " + album.id);
 		sb.append("  ORDER BY s.iTrack, s.strFileName");
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
@@ -205,12 +208,13 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Artist artist) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, a.StrArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist a");
+		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist art, album AS alb");
 		sb.append("  WHERE s.idPath = p.idPath");
-		sb.append("  AND s.idArtist = a.idArtist");
+		sb.append("  AND s.idArtist = art.idArtist");
+		sb.append("  AND s.idAlbum = alb.idAlbum");
 		sb.append("  AND s.idArtist = " + artist.id);
-		sb.append("  ORDER BY s.iTrack, s.strFileName");
+		sb.append("  ORDER BY alb.strAlbum, s.iTrack, s.strFileName");
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -302,14 +306,15 @@ public class MusicClient {
 		ArrayList<Song> songs = new ArrayList<Song>();
 		String[] fields = response.split("<field>");
 		try { 
-			for (int row = 1; row < fields.length; row += 6) { 
-				songs.add(new Song( // String title, String artist, int track, int duration, String path
+			for (int row = 1; row < fields.length; row += 7) { 
+				songs.add(new Song( // String title, String artist, String album, int track, int duration, String path
 						Connection.trim(fields[row]), 
 						Connection.trim(fields[row + 1]), 
-						Connection.trimInt(fields[row + 2]), 
+						Connection.trim(fields[row + 2]), 
 						Connection.trimInt(fields[row + 3]), 
-						Connection.trim(fields[row + 4]),
-						Connection.trim(fields[row + 5]) 
+						Connection.trimInt(fields[row + 4]), 
+						Connection.trim(fields[row + 5]),
+						Connection.trim(fields[row + 6]) 
 				));
 			}
 		} catch (Exception e) {
