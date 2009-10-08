@@ -1,3 +1,24 @@
+/*
+ *      Copyright (C) 2005-2009 Team XBMC
+ *      http://xbmc.org
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with XBMC Remote; see the file license.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 package org.xbmc.android.guilogic;
 
 import java.util.ArrayList;
@@ -29,7 +50,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class AlbumListLogic {
+public class AlbumListLogic extends ListLogic {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
@@ -37,69 +58,70 @@ public class AlbumListLogic {
 	
 	public static final String EXTRA_LIST_TYPE = "listType"; 
 	public static final String EXTRA_ALBUM = "album"; 
-	
-	private final ListView mList;
-	private final Activity mActivity;
-	
+
 	private ListType mListType;
 	private Album mAlbum;
 	
 	public AlbumListLogic(Activity activity, ListView list) {
-		mList = list;
-		mActivity = activity;
-		
-		final String mt = mActivity.getIntent().getStringExtra(EXTRA_LIST_TYPE);
-		final TextView titleView = (TextView)mActivity.findViewById(R.id.titlebar_text);
-		mListType = mt != null ? ListType.valueOf(mt) : ListType.albums;
-		mAlbum = (Album)mActivity.getIntent().getSerializableExtra(EXTRA_ALBUM);
-		
-		mActivity.registerForContextMenu(mList);
-		
-		list.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Intent nextActivity;
-				switch (mListType) {
-					case albums:
-						Album album = (Album)view.getTag();
-						nextActivity = new Intent(view.getContext(), MusicLibraryActivity.class);
-						nextActivity.putExtras(mActivity.getIntent().getExtras());
-						nextActivity.putExtra(EXTRA_LIST_TYPE, ListType.songs.toString());
-						nextActivity.putExtra(EXTRA_ALBUM, album);
-						mActivity.startActivity(nextActivity);
-					break;
-					case songs:
-						Song song = (Song)view.getTag();
-						HttpApiThread.music().play(new HttpApiHandler<Boolean>((Activity)view.getContext()), song);
-					break;
-				}
-			}
-		});
-				
-		// depending on list type, fetch albums or songs
-		switch (mListType) {
-			case albums:
-				titleView.setText("Albums...");
-				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
-					public void run() {
-						titleView.setText("Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
+		super(activity, list);
+	}
+	
+	
+	public void onCreate() {
+		if (!isCreated()) {
+			final String mt = mActivity.getIntent().getStringExtra(EXTRA_LIST_TYPE);
+			mListType = mt != null ? ListType.valueOf(mt) : ListType.albums;
+			mAlbum = (Album)mActivity.getIntent().getSerializableExtra(EXTRA_ALBUM);
+			
+			mActivity.registerForContextMenu(mList);
+			
+			mList.setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					Intent nextActivity;
+					switch (mListType) {
+						case albums:
+							Album album = (Album)view.getTag();
+							nextActivity = new Intent(view.getContext(), MusicLibraryActivity.class);
+							nextActivity.putExtras(mActivity.getIntent().getExtras());
+							nextActivity.putExtra(EXTRA_LIST_TYPE, ListType.songs.toString());
+							nextActivity.putExtra(EXTRA_ALBUM, album);
+							mActivity.startActivity(nextActivity);
+						break;
+						case songs:
+							Song song = (Song)view.getTag();
+							HttpApiThread.music().play(new HttpApiHandler<Boolean>((Activity)view.getContext()), song);
+						break;
 					}
-				});
-				break;
-			case songs:
-				titleView.setText("Songs...");
-				if (mAlbum != null) {
-					HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
-						public void run() {
-							titleView.setText(mAlbum.name);
-							mList.setAdapter(new SongAdapter(mActivity, value));
-						}
-					}, mAlbum);
 				}
-				break;
-			default:
-				break;
+			});
+					
+			// depending on list type, fetch albums or songs
+			switch (mListType) {
+				case albums:
+					setTitle("Albums...");
+					HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+						public void run() {
+							setTitle("Albums (" + value.size() + ")");
+							mList.setAdapter(new AlbumAdapter(mActivity, value));
+						}
+					});
+					break;
+				case songs:
+					setTitle("Songs...");
+					if (mAlbum != null) {
+						HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
+							public void run() {
+								setTitle(mAlbum.name);
+								mList.setAdapter(new SongAdapter(mActivity, value));
+							}
+						}, mAlbum);
+					}
+					break;
+				default:
+					break;
+			}
 		}
+		super.onCreate();
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {

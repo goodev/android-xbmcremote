@@ -1,3 +1,24 @@
+/*
+ *      Copyright (C) 2005-2009 Team XBMC
+ *      http://xbmc.org
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with XBMC Remote; see the file license.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 package org.xbmc.android.guilogic;
 
 import java.util.ArrayList;
@@ -6,7 +27,7 @@ import java.util.HashMap;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.activity.MusicLibraryActivity;
+import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.MediaType;
@@ -24,7 +45,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class FileListLogic {
+public class FileListLogic extends ListLogic {
 	
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
@@ -32,51 +53,50 @@ public class FileListLogic {
 	public static final String EXTRA_SHARE_TYPE = "shareType"; 
 	public static final String EXTRA_PATH = "path"; 
 	
-	private final ListView mList;
-	private final Activity mActivity;
-	
 	private HashMap<String, MediaLocation> mFileItems;
 	private volatile String mGettingUrl;
 	private MediaType mMediaType;
-	
-	private TextView mTitleView;
 	
 	// from ListActivity.java
 	protected ListAdapter mAdapter;
 	
 	public FileListLogic(Activity activity, ListView list) {
-		mList = list;
-		mActivity = activity;
-		
-		final String st = mActivity.getIntent().getStringExtra(EXTRA_SHARE_TYPE);
-		mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
-		mTitleView = (TextView)mActivity.findViewById(R.id.titlebar_text);
-		final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
-		fillUp(path == null ? "" : path);
-
-		list.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if (mFileItems == null)
-					return;
-
-				MediaLocation item = mFileItems.get(((MediaLocation)parent.getAdapter().getItem(position)).name);
-				if (item.isDirectory) {
-					Intent nextActivity = new Intent(mActivity, MusicLibraryActivity.class);
-					nextActivity.putExtras(mActivity.getIntent().getExtras());
-					nextActivity.putExtra(EXTRA_SHARE_TYPE, mMediaType.toString());
-					nextActivity.putExtra(EXTRA_PATH, item.path);
-					mActivity.startActivity(nextActivity);
-				} else {
-					HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(mActivity) {
-						public void run() {
-							if (value) {
-								mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+		super(activity, list);
+	}
+	
+	public void onCreate() {
+		if (!isCreated()) {
+			final String st = mActivity.getIntent().getStringExtra(EXTRA_SHARE_TYPE);
+			mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
+			final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
+			fillUp(path == null ? "" : path);
+	
+			mList.setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if (mFileItems == null)
+						return;
+	
+					MediaLocation item = mFileItems.get(((MediaLocation)parent.getAdapter().getItem(position)).name);
+					if (item.isDirectory) {
+						Intent nextActivity = new Intent(mActivity, ListActivity.class);
+						nextActivity.putExtras(mActivity.getIntent().getExtras());
+						nextActivity.putExtra(ListActivity.EXTRA_LOGIC_TYPE, ListLogic.LOGIC_FILELIST);
+						nextActivity.putExtra(EXTRA_SHARE_TYPE, mMediaType.toString());
+						nextActivity.putExtra(EXTRA_PATH, item.path);
+						mActivity.startActivity(nextActivity);
+					} else {
+						HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(mActivity) {
+							public void run() {
+								if (value) {
+									mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+								}
 							}
-						}
-					}, item.path);
+						}, item.path);
+					}
 				}
-			}
-		});
+			});
+		}
+		super.onCreate();
 	}
 	
 	private class FileItemAdapter extends ArrayAdapter<MediaLocation> {
@@ -116,17 +136,15 @@ public class FileListLogic {
 		mGettingUrl = url;
 		mFileItems = null;
 		mList.setTextFilterEnabled(false);
-		mTitleView.setText("Loading...");
+		setTitle("Loading...");
 		
 		HttpApiHandler<ArrayList<MediaLocation>> mediaListHandler = new HttpApiHandler<ArrayList<MediaLocation>>(mActivity) {
 			public void run() {
-				mTitleView.setText(url);
-				
+				setTitle(url.equals("") ? "/" : url);
 				mFileItems = new HashMap<String, MediaLocation>();
 				for (MediaLocation item : value) {
 					mFileItems.put(item.name, item);
 				}
-				
 				setListAdapter(new FileItemAdapter(mActivity, value));
 				mList.setTextFilterEnabled(true);
 			}
