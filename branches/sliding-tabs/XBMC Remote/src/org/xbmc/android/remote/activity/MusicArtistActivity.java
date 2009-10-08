@@ -23,7 +23,9 @@ package org.xbmc.android.remote.activity;
 
 import java.io.IOException;
 
-import org.xbmc.android.guilogic.MusicListLogic;
+import org.xbmc.android.guilogic.AlbumListLogic;
+import org.xbmc.android.guilogic.ListLogic;
+import org.xbmc.android.guilogic.SongListLogic;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
@@ -32,9 +34,6 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.data.Album;
-import org.xbmc.httpapi.data.Artist;
-import org.xbmc.httpapi.type.ListType;
 
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -48,13 +47,12 @@ import android.widget.ListView;
 public class MusicArtistActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private MusicListLogic mAlbumLogic;
-	private MusicListLogic mSongLogic;
+	private AlbumListLogic mAlbumLogic;
+	private SongListLogic mSongLogic;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		ErrorHandler.setActivity(this);
@@ -65,22 +63,21 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("musictab1", "Albums", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.albumlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("musictab2", "Songs", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.songlist_outer_layout));
 		mTabHost.setCurrentTab(0);
-
-		mAlbumLogic = new MusicListLogic(this, (ListView)findViewById(R.id.albumlist_list));
-		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.setType(ListType.albums);
-		mSongLogic = new MusicListLogic(this, (ListView)findViewById(R.id.songlist_list));
-		mSongLogic.findTitleView(findViewById(R.id.songlist_outer_layout));
-		mSongLogic.setType(ListType.songs);
 		
-		mAlbumLogic.onCreate();
+		mAlbumLogic = new AlbumListLogic();
+		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumLogic.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
+
+		mSongLogic = new SongListLogic();
+		mSongLogic.findTitleView(findViewById(R.id.songlist_outer_layout));
+		
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				if (tabId.equals("musictab1")) {
-					mAlbumLogic.onCreate();
+					mAlbumLogic.onCreate(MusicArtistActivity.this, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("musictab2")) {
-					mSongLogic.onCreate();
+					mSongLogic.onCreate(MusicArtistActivity.this, (ListView)findViewById(R.id.songlist_list));
 				}
 			}
 		});

@@ -26,14 +26,12 @@ import java.util.ArrayList;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
-import org.xbmc.android.guilogic.MusicListLogic;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.info.SystemInfo;
-import org.xbmc.httpapi.type.ListType;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
@@ -156,7 +154,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			break;
 		case HOME_ACTION_MUSIC:
 //			startActivityForResult(createMediaIntent(MediaType.music, v), 0);
-			startActivityForResult(createMusicIntent(ListType.albums, v), 0);
+			startActivity(new Intent(v.getContext(), MusicLibraryActivity.class));
 //			startActivityForResult(new Intent(v.getContext(), MediaTabContainerActivity.class), 0);
 			break;
 		case HOME_ACTION_VIDEOS:
@@ -210,13 +208,6 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		return myIntent;
 	}
 	
-	private Intent createMusicIntent(ListType listType, View v) {
-		Intent myIntent = new Intent(v.getContext(), MusicLibraryActivity.class);
-		myIntent.putExtra(MusicListLogic.EXTRA_LIST_TYPE, listType.toString());
-		return myIntent;
-	}
-
-		
 	private class HomeItem {
 		public final int ID, icon;
 		public final String title, subtitle;

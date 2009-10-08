@@ -1,5 +1,7 @@
 package org.xbmc.android.guilogic;
 
+import java.io.Serializable;
+
 import org.xbmc.android.remote.R;
 
 import android.app.Activity;
@@ -10,30 +12,25 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public abstract class ListLogic {
+public abstract class ListLogic implements Serializable {
 	
-	public static final int LOGIC_ALBUM = 1;
-	public static final int LOGIC_FILELIST = 2;
+	public static final String EXTRA_LIST_LOGIC = "ListLogic"; 
+	public static final String EXTRA_ALBUM = "album"; 
+	public static final String EXTRA_ARTIST = "artist";
+	public static final String EXTRA_SHARE_TYPE = "shareType"; 
+	public static final String EXTRA_PATH = "path"; 
 	
-	protected final ListView mList;
-	protected final Activity mActivity;
+	protected ListView mList;
+	protected Activity mActivity;
 	
 	private TextView mTitleView;
 	private boolean isCreated = false;
 	
-	public ListLogic(Activity activity, ListView list) {
+	
+	public void onCreate(Activity activity, ListView list) {
 		mList = list;
 		mActivity = activity;
-	}
-	
-	public static ListLogic factory(int logicType, Activity activity, ListView list) {
-		switch (logicType) {
-		case LOGIC_ALBUM:
-			return new MusicListLogic(activity, list);
-		case LOGIC_FILELIST:
-			return new FileListLogic(activity, list);
-		}
-		return null;
+		isCreated = true;
 	}
 	
 	public abstract void onContextItemSelected(MenuItem item);
@@ -54,8 +51,7 @@ public abstract class ListLogic {
 		return isCreated;
 	}
 	
-	public void onCreate() {
-		isCreated = true;
-	}
-	
+
+
+	private static final long serialVersionUID = 2903701184005613570L;
 }

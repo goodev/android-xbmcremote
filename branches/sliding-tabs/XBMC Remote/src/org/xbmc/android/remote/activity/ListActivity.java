@@ -42,8 +42,6 @@ import android.widget.ListView;
 
 public class ListActivity extends Activity  {
 	
-	public static final String EXTRA_LOGIC_TYPE = "LogicType"; 
-	
 	ListLogic mListLogic;
 
 	@Override
@@ -54,10 +52,10 @@ public class ListActivity extends Activity  {
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.blanklist);
 		
-		mListLogic = ListLogic.factory(getIntent().getIntExtra(EXTRA_LOGIC_TYPE, 1), this, (ListView)findViewById(R.id.blanklist_list));
+		mListLogic = (ListLogic)getIntent().getSerializableExtra(ListLogic.EXTRA_LIST_LOGIC);
 		
 		mListLogic.findTitleView(findViewById(R.id.blanklist_outer_layout));
-		mListLogic.onCreate();
+		mListLogic.onCreate(this, (ListView)findViewById(R.id.blanklist_list));
 	}
 	
 	@Override

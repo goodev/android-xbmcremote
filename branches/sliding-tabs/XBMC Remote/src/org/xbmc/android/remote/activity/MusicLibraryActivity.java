@@ -23,8 +23,10 @@ package org.xbmc.android.remote.activity;
 
 import java.io.IOException;
 
-import org.xbmc.android.guilogic.MusicListLogic;
+import org.xbmc.android.guilogic.AlbumListLogic;
+import org.xbmc.android.guilogic.ArtistListLogic;
 import org.xbmc.android.guilogic.FileListLogic;
+import org.xbmc.android.guilogic.ListLogic;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
@@ -33,7 +35,6 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.type.ListType;
 
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -47,8 +48,8 @@ import android.widget.ListView;
 public class MusicLibraryActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private MusicListLogic mAlbumLogic;
-	private MusicListLogic mArtistLogic;
+	private AlbumListLogic mAlbumLogic;
+	private ArtistListLogic mArtistLogic;
 	private FileListLogic mFileLogic;
 
 	@Override
@@ -60,40 +61,39 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		setContentView(R.layout.musiclibrary);
 		
 		mTabHost = getTabHost();
-
+		
+		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("musictab1", "Albums", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.albumlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("musictab2", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("musictab3", "Artists", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.artists_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("musictab4", "Playlists", R.drawable.st_playlist_on, R.drawable.st_playlist_off).setBigIcon(R.drawable.st_playlist_over).setContent(R.id.textview3));
-
 		mTabHost.setCurrentTab(0);
+
+		// assign the gui logic to each tab
+		mAlbumLogic = new AlbumListLogic();
+		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumLogic.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
+
+		mFileLogic = new FileListLogic();
+		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
 		
+		mArtistLogic = new ArtistListLogic();
+		mArtistLogic.findTitleView(findViewById(R.id.artists_outer_layout));
 		
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				if (tabId.equals("musictab1")) {
-					mAlbumLogic.onCreate();
+					mAlbumLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("musictab2")) {
-					mFileLogic.onCreate();
+					mFileLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
 				}
 				if (tabId.equals("musictab3")) {
-					mArtistLogic.onCreate();
+					mArtistLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.artists_list));
 				}
-				
 			}
 		});
 
-		mAlbumLogic = new MusicListLogic(this, (ListView)findViewById(R.id.albumlist_list));
-		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.setType(ListType.albums);
-		mFileLogic = new FileListLogic(this, (ListView)findViewById(R.id.filelist_list));
-		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
-		mArtistLogic = new MusicListLogic(this, (ListView)findViewById(R.id.artists_list));
-		mArtistLogic.findTitleView(findViewById(R.id.artists_outer_layout));
-		mArtistLogic.setType(ListType.artists);
-		
-		mAlbumLogic.onCreate();
 	}
 	
 	@Override

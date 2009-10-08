@@ -71,7 +71,7 @@ public class MediaListActivity extends ListActivity {
 
 		MediaLocation item = mFileItems.get(l.getAdapter().getItem(position));
 		if (item.isDirectory) {
-			Intent nextActivity = new Intent(this, MediaTabContainerActivity.class);
+			Intent nextActivity = new Intent(this, MediaListActivity.class);
 			nextActivity.putExtras(getIntent().getExtras());
 			nextActivity.putExtra("shareType", mMediaType.toString());
 			nextActivity.putExtra("path", item.path);

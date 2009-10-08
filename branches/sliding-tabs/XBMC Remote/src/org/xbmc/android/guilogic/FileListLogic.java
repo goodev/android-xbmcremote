@@ -53,9 +53,6 @@ public class FileListLogic extends ListLogic {
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
 	
-	public static final String EXTRA_SHARE_TYPE = "shareType"; 
-	public static final String EXTRA_PATH = "path"; 
-	
 	private HashMap<String, MediaLocation> mFileItems;
 	private volatile String mGettingUrl;
 	private MediaType mMediaType;
@@ -63,12 +60,10 @@ public class FileListLogic extends ListLogic {
 	// from ListActivity.java
 	protected ListAdapter mAdapter;
 	
-	public FileListLogic(Activity activity, ListView list) {
-		super(activity, list);
-	}
-	
-	public void onCreate() {
+	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
+			super.onCreate(activity, list);
+			
 			final String st = mActivity.getIntent().getStringExtra(EXTRA_SHARE_TYPE);
 			mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
 			final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
@@ -83,9 +78,9 @@ public class FileListLogic extends ListLogic {
 					if (item.isDirectory) {
 						Intent nextActivity = new Intent(mActivity, ListActivity.class);
 						nextActivity.putExtras(mActivity.getIntent().getExtras());
-						nextActivity.putExtra(ListActivity.EXTRA_LOGIC_TYPE, ListLogic.LOGIC_FILELIST);
-						nextActivity.putExtra(EXTRA_SHARE_TYPE, mMediaType.toString());
-						nextActivity.putExtra(EXTRA_PATH, item.path);
+						nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new FileListLogic());
+						nextActivity.putExtra(ListLogic.EXTRA_SHARE_TYPE, mMediaType.toString());
+						nextActivity.putExtra(ListLogic.EXTRA_PATH, item.path);
 						mActivity.startActivity(nextActivity);
 					} else {
 						HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(mActivity) {
@@ -99,7 +94,6 @@ public class FileListLogic extends ListLogic {
 				}
 			});
 		}
-		super.onCreate();
 	}
 	
 	private class FileItemAdapter extends ArrayAdapter<MediaLocation> {
@@ -177,4 +171,5 @@ public class FileListLogic extends ListLogic {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 	}
+	private static final long serialVersionUID = -3883887349523448733L;
 }
