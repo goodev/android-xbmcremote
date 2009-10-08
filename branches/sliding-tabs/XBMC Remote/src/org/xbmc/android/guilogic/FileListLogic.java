@@ -34,9 +34,12 @@ import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -166,4 +169,12 @@ public class FileListLogic extends ListLogic {
             mList.setAdapter(adapter);
         }
     }
+
+	@Override
+	public void onContextItemSelected(MenuItem item) {
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	}
 }

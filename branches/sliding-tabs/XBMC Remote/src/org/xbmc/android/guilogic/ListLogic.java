@@ -3,8 +3,10 @@ package org.xbmc.android.guilogic;
 import org.xbmc.android.remote.R;
 
 import android.app.Activity;
+import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,11 +36,9 @@ public abstract class ListLogic {
 		return null;
 	}
 	
-	public void onContextItemSelected(MenuItem item) {
-	}
+	public abstract void onContextItemSelected(MenuItem item);
 	
-	public void onCreateContextMenu() {
-	}
+	public abstract void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo);
 	
 	public void findTitleView(View parent) {
 		mTitleView = (TextView)parent.findViewById(R.id.titlebar_text);	

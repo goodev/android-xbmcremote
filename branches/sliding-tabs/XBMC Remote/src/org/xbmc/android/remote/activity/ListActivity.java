@@ -62,7 +62,7 @@ public class ListActivity extends Activity  {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		mListLogic.onCreateContextMenu();
+		mListLogic.onCreateContextMenu(menu, v, menuInfo);
 	}
 	
 	@Override

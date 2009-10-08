@@ -173,6 +173,7 @@ public class MusicListLogic extends ListLogic {
 		super.onCreate();
 	}
 	
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + mListType.getSingular());
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + mListType.getSingular());
@@ -190,6 +191,9 @@ public class MusicListLogic extends ListLogic {
 		}
 		menu.setHeaderTitle(title);
 	}
+	
+
+	
 	
 	public void onContextItemSelected(MenuItem item) {
 		switch (mListType) {
@@ -349,4 +353,5 @@ public class MusicListLogic extends ListLogic {
 			return row;
 		}
 	}
+
 }
