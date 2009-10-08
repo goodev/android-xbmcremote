@@ -77,7 +77,6 @@ public class FileListLogic extends ListLogic {
 					MediaLocation item = mFileItems.get(((MediaLocation)parent.getAdapter().getItem(position)).name);
 					if (item.isDirectory) {
 						Intent nextActivity = new Intent(mActivity, ListActivity.class);
-						nextActivity.putExtras(mActivity.getIntent().getExtras());
 						nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new FileListLogic());
 						nextActivity.putExtra(ListLogic.EXTRA_SHARE_TYPE, mMediaType.toString());
 						nextActivity.putExtra(ListLogic.EXTRA_PATH, item.path);
