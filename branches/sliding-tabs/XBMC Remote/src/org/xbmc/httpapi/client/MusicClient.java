@@ -27,6 +27,7 @@ import java.util.Collections;
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
+import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 
@@ -168,7 +169,7 @@ public class MusicClient {
 	}
 	
 	/**
-	 * Get all albums from database
+	 * Gets all albums from database
 	 * @return All albums
 	 */
 	public ArrayList<Album> getAlbums() {
@@ -182,8 +183,8 @@ public class MusicClient {
 	}
 
 	/**
-	 * Get all albums of an artist from database
-	 * @return All albums
+	 * Gets all albums of an artist from database
+	 * @return Albums with an artist
 	 */
 	public ArrayList<Album> getAlbums(Artist artist) {
 		StringBuilder sb = new StringBuilder();
@@ -196,13 +197,53 @@ public class MusicClient {
 		sb.append("  ORDER BY a.strAlbum ASC");
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
+
+	/**
+	 * Gets all albums of with at least one song in a genre
+	 * @return Albums of a genre
+	 */
+	public ArrayList<Album> getAlbums(Genre genre) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("SELECT DISTINCT alb.idAlbum, alb.strAlbum, art.strArtist, alb.iYear");
+		sb.append("  FROM artist as art, exgenresong AS g, song AS s, album as alb");
+		sb.append("  WHERE g.idGenre = " + genre.id);
+		sb.append("  AND g.idSong = s.idSong");
+		sb.append("  AND art.idArtist = alb.idArtist");
+		sb.append("  AND alb.idAlbum = s.idAlbum");
+		sb.append("  ORDER BY alb.strAlbum");
+		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
+	}
 	
 	/**
-	 * Get all albums from database
+	 * Gets all albums from database
 	 * @return All albums
 	 */
 	public ArrayList<Artist> getArtists() {
 		return parseArtists(mConnection.query("QueryMusicDatabase", "SELECT idArtist, strArtist FROM artist ORDER BY strArtist"));
+	}
+
+	/**
+	 * Gets all artists with at least one song of a genre.
+	 * @return Albums with a genre
+	 */
+	public ArrayList<Artist> getArtists(Genre genre) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT DISTINCT a.idArtist, a.strArtist");
+		sb.append("  FROM artist as a, exgenresong AS g, song AS s");
+		sb.append("  WHERE g.idGenre = " + genre.id);
+		sb.append("  AND g.idSong = s.idSong");
+		sb.append("  AND a.idArtist = s.idArtist");
+		sb.append("  ORDER BY a.strArtist");
+		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Gets all genres from database
+	 * @return All genres
+	 */
+	public ArrayList<Genre> getGenres() {
+		return parseGenres(mConnection.query("QueryMusicDatabase", "SELECT idGenre, strGenre FROM genre ORDER BY strGenre"));
 	}
 	
 	/**
@@ -239,7 +280,7 @@ public class MusicClient {
 	
 	/**
 	 * Returns a list containing all tracks of an artist. The list is sorted by album name, filename.
-	 * @param artist Arist
+	 * @param artist Artist
 	 * @return All tracks of the artist
 	 */
 	public ArrayList<Song> getSongs(Artist artist) {
@@ -251,6 +292,23 @@ public class MusicClient {
 		sb.append("  AND s.idAlbum = alb.idAlbum");
 		sb.append("  AND s.idArtist = " + artist.id);
 		sb.append("  ORDER BY alb.strAlbum, s.iTrack, s.strFileName");
+		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Returns a list containing all tracks of a genre. The list is sorted by artist, album name, filename.
+	 * @param genre Genre
+	 * @return All tracks of the genre
+	 */
+	public ArrayList<Song> getSongs(Genre genre) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist art, album AS alb");
+		sb.append("  WHERE s.idPath = p.idPath");
+		sb.append("  AND s.idArtist = art.idArtist");
+		sb.append("  AND s.idAlbum = alb.idAlbum");
+		sb.append("  AND s.idGenre = " + genre.id);
+		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -368,7 +426,7 @@ public class MusicClient {
 	 * 	<li><code>strArtist</code></li>
 	 * </ol>
 	 * @param response
-	 * @return List of Songs
+	 * @return List of Artists
 	 */
 	private ArrayList<Artist> parseArtists(String response) {
 		ArrayList<Artist> artists = new ArrayList<Artist>();
@@ -384,5 +442,31 @@ public class MusicClient {
 			System.out.println("ERROR: " + e.getMessage());
 		}
 		return artists;		
+	}
+	
+	/**
+	 * Converts query response from HTTP API to a list of Genre objects. Each
+	 * row must return the following columns in the following order:
+	 * <ol>
+	 * 	<li><code>idGenre</code></li>
+	 * 	<li><code>strGenre</code></li>
+	 * </ol>
+	 * @param response
+	 * @return List of Genres
+	 */
+	private ArrayList<Genre> parseGenres(String response) {
+		ArrayList<Genre> genres = new ArrayList<Genre>();
+		String[] fields = response.split("<field>");
+		try { 
+			for (int row = 1; row < fields.length; row += 2) { 
+				genres.add(new Genre(
+						Connection.trimInt(fields[row]), 
+						Connection.trim(fields[row + 1])
+				));
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+		}
+		return genres;		
 	}
 }

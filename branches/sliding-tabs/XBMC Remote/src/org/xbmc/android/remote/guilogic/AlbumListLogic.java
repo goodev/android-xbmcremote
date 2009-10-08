@@ -30,6 +30,7 @@ import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
+import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -57,12 +58,14 @@ public class AlbumListLogic extends ListLogic {
 	public static final int ITEM_CONTEXT_INFO = 3;
 	
 	private Artist mArtist;
+	private Genre mGenre;
 	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
 			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(ListLogic.EXTRA_ARTIST);
+			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListLogic.EXTRA_GENRE);
 			mActivity.registerForContextMenu(mList);
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -76,15 +79,7 @@ public class AlbumListLogic extends ListLogic {
 				}
 			});
 					
-			if (mArtist == null) {
-				setTitle("Albums...");
-				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
-					public void run() {
-						setTitle("Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
-					}
-				});
-			} else {
+			if (mArtist != null) {
 				setTitle(mArtist.name + " - Albums...");
 				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 					public void run() {
@@ -92,6 +87,24 @@ public class AlbumListLogic extends ListLogic {
 						mList.setAdapter(new AlbumAdapter(mActivity, value));
 					}
 				}, mArtist);
+				
+			} else if (mGenre != null) {
+				setTitle(mGenre.name + " - Albums...");
+				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+					public void run() {
+						setTitle(mGenre.name + " - Albums (" + value.size() + ")");
+						mList.setAdapter(new AlbumAdapter(mActivity, value));
+					}
+				}, mGenre);
+				
+			} else {
+				setTitle("Albums...");
+				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+					public void run() {
+						setTitle("Albums (" + value.size() + ")");
+						mList.setAdapter(new AlbumAdapter(mActivity, value));
+					}
+				});
 			}
 		}
 	}

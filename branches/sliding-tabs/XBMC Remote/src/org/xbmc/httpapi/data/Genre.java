@@ -23,60 +23,24 @@ package org.xbmc.httpapi.data;
 
 import java.io.Serializable;
 
-import org.xbmc.android.util.Crc32;
-
 /**
- * Not very much going on, artist is basically a name.
+ * Genre is basically a name and an ID.
  * 
  * @author Team XBMC
  */
-public class Artist implements ICoverArt, Serializable {
-
-	/**
-	 * TODO verify that's correct and test!
-	 * Points to where the artist thumbs are stored
-	 */
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Artist/";
+public class Genre implements Serializable {
 
 	/**
 	 * Constructor
 	 * @param id		Database ID
-	 * @param name		Artist name
+	 * @param name		Album name
+	 * @param artist	Artist
 	 */
-	public Artist(int id, String name) {
+	public Genre(int id, String name) {
 		this.id = id;
 		this.name = name;
 	}
-	
-	public String getArtFolder() {
-		return "/Artist";
-	}
 
-	/**
-	 * Composes the complete path to the artist's thumbnail
-	 * @return Path to thumbnail
-	 */
-	public String getThumbUri() {
-		String hex = getCrc();
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
-	}
-	
-	public static String getThumbUri(ICoverArt art) {
-		String hex = art.getCrc();
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
-	}
-	
-	/**
-	 * Returns the CRC of the artist on which the thumb name is based upon.
-	 * @return 8-char CRC32
-	 */
-	public String getCrc() {
-		if (thumbID == null) {
-			thumbID = Crc32.computeAsHex((name).toLowerCase());
-		}
-		return thumbID;
-	}
-	
 	/**
 	 * Returns database ID.
 	 * @return
@@ -97,11 +61,9 @@ public class Artist implements ICoverArt, Serializable {
 	 */
 	public int id;
 	/**
-	 * Artist name
+	 * Genre name
 	 */
 	public String name;
-	
-	public String thumbID = null;
 	
 	private static final long serialVersionUID = 9073064679039418773L;
 }

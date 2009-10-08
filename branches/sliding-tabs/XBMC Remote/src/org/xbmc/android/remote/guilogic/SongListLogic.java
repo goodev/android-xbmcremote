@@ -28,6 +28,7 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
+import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -53,12 +54,9 @@ public class SongListLogic extends ListLogic {
 	public static final int ITEM_CONTEXT_PLAY = 2;
 	public static final int ITEM_CONTEXT_INFO = 3;
 	
-	public static final String EXTRA_LIST_TYPE = "listType"; 
-	public static final String EXTRA_ALBUM = "album"; 
-	public static final String EXTRA_ARTIST = "artist"; 
-
 	private Album mAlbum;
 	private Artist mArtist;
+	private Genre mGenre;
 	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
@@ -67,6 +65,7 @@ public class SongListLogic extends ListLogic {
 			
 			mAlbum = (Album)mActivity.getIntent().getSerializableExtra(EXTRA_ALBUM);
 			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(EXTRA_ARTIST);
+			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(EXTRA_GENRE);
 			
 			mActivity.registerForContextMenu(mList);
 			
@@ -77,7 +76,6 @@ public class SongListLogic extends ListLogic {
 				}
 			});
 					
-			
 			if (mAlbum != null) {
 				setTitle("Songs...");
 				HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
@@ -86,6 +84,7 @@ public class SongListLogic extends ListLogic {
 						mList.setAdapter(new SongAdapter(mActivity, value));
 					}
 				}, mAlbum);
+				
 			} else if (mArtist != null) {
 				setTitle(mArtist.name + " - Songs...");
 				HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
@@ -94,6 +93,15 @@ public class SongListLogic extends ListLogic {
 						mList.setAdapter(new SongAdapter(mActivity, value));
 					}
 				}, mArtist);
+				
+			} else if (mGenre != null) {
+				setTitle(mGenre.name + " - Songs...");
+				HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
+					public void run() {
+						setTitle(mGenre.name + " - Songs (" + value.size() + ")");
+						mList.setAdapter(new SongAdapter(mActivity, value));
+					}
+				}, mGenre);
 			}
 		}
 	}

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.activity.MusicArtistActivity;
+import org.xbmc.android.remote.activity.MusicGenreActivity;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Song;
@@ -46,49 +46,34 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class ArtistListLogic extends ListLogic {
+public class GenreListLogic extends ListLogic {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
-	public static final int ITEM_CONTEXT_INFO = 3;
-	
-	private Genre mGenre;
 	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
-			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListLogic.EXTRA_GENRE);
-			
 			mActivity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					Artist artist = (Artist)view.getTag();
-					nextActivity = new Intent(view.getContext(), MusicArtistActivity.class);
-					nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new AlbumListLogic());
-					nextActivity.putExtra(ListLogic.EXTRA_ARTIST, artist);
+					Genre genre = (Genre)view.getTag();
+					nextActivity = new Intent(view.getContext(), MusicGenreActivity.class);
+					nextActivity.putExtra(ListLogic.EXTRA_GENRE, genre);
+					nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new SongListLogic());
 					mActivity.startActivity(nextActivity);
 				}
 			});
-			
-			if (mGenre != null) {
-				setTitle(mGenre.name + " - Artists...");
-				HttpApiThread.music().getArtists(new HttpApiHandler<ArrayList<Artist>>(mActivity) {
-					public void run() {
-						setTitle(mGenre.name + " - Artists (" + value.size() + ")");
-						mList.setAdapter(new ArtistAdapter(mActivity, value));
-					}
-				}, mGenre);
-			} else {
-				setTitle("Artists...");
-				HttpApiThread.music().getArtists(new HttpApiHandler<ArrayList<Artist>>(mActivity) {
-					public void run() {
-						setTitle("Artists (" + value.size() + ")");
-						mList.setAdapter(new ArtistAdapter(mActivity, value));
-					}
-				});
-			}
+
+			setTitle("Genres...");
+			HttpApiThread.music().getGenres(new HttpApiHandler<ArrayList<Genre>>(mActivity) {
+				public void run() {
+					setTitle("Genres (" + value.size() + ")");
+					mList.setAdapter(new GenreAdapter(mActivity, value));
+				}
+			});
 		}
 	}
 	
@@ -96,8 +81,8 @@ public class ArtistListLogic extends ListLogic {
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		final Artist artist = (Artist)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 		menu.setHeaderTitle(artist.name);
-		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue all songs from Artist");
-		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play all songs from Artist");
+		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue all songs");
+		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play all songs");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
@@ -112,9 +97,9 @@ public class ArtistListLogic extends ListLogic {
 		}
 	}
 	
-	private class ArtistAdapter extends ArrayAdapter<Artist> {
+	private class GenreAdapter extends ArrayAdapter<Genre> {
 		private Activity mActivity;
-		ArtistAdapter(Activity activity, ArrayList<Artist> items) {
+		GenreAdapter(Activity activity, ArrayList<Genre> items) {
 			super(activity, R.layout.listitem_oneliner, items);
 			mActivity = activity;
 		}
@@ -126,15 +111,15 @@ public class ArtistListLogic extends ListLogic {
 			} else {
 				row = convertView;
 			}
-			final Artist artist = this.getItem(position);
-			row.setTag(artist);
+			final Genre genre = this.getItem(position);
+			row.setTag(genre);
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
 			if (position == getCount() - 1) {
 				row.setBackgroundResource(R.drawable.back_bottom_rounded);
 			} else {
 				row.setBackgroundColor(0xfff8f8f8);
 			}			
-			title.setText(artist.name);
+			title.setText(genre.name);
 			return row;
 		}
 	}

@@ -26,8 +26,7 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.guilogic.AlbumListLogic;
 import org.xbmc.android.remote.guilogic.ArtistListLogic;
-import org.xbmc.android.remote.guilogic.FileListLogic;
-import org.xbmc.android.remote.guilogic.GenreListLogic;
+import org.xbmc.android.remote.guilogic.SongListLogic;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
@@ -45,62 +44,51 @@ import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 
-public class MusicLibraryActivity extends SlidingTabActivity  {
+public class MusicGenreActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private AlbumListLogic mAlbumLogic;
 	private ArtistListLogic mArtistLogic;
-	private GenreListLogic mGenreLogic;
-	private FileListLogic mFileLogic;
-
+	private AlbumListLogic mAlbumLogic;
+	private SongListLogic mSongLogic;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		ErrorHandler.setActivity(this);
-		setContentView(R.layout.musiclibrary);
+		setContentView(R.layout.musicgenre);
 		
 		mTabHost = getTabHost();
-		
-		// add the tabs
-		mTabHost.addTab(mTabHost.newTabSpec("tab_albums", "Albums", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.albumlist_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_artists", "Artists", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.artists_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_playlist_on, R.drawable.st_playlist_off).setBigIcon(R.drawable.st_playlist_over).setContent(R.id.genres_outer_layout));
+
+		mTabHost.addTab(mTabHost.newTabSpec("genretab_artists", "Artists", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.artistlist_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("genretab_albums", "Albums", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.albumlist_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("genretab_songs", "Songs", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.songlist_outer_layout));
 		mTabHost.setCurrentTab(0);
-
-		// assign the gui logic to each tab
-		mAlbumLogic = new AlbumListLogic();
-		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
-
-		mFileLogic = new FileListLogic();
-		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
 		
 		mArtistLogic = new ArtistListLogic();
-		mArtistLogic.findTitleView(findViewById(R.id.artists_outer_layout));
+		mArtistLogic.findTitleView(findViewById(R.id.artistlist_outer_layout));
+		mArtistLogic.onCreate(this, (ListView)findViewById(R.id.artistlist_list)); // first tab can be updated now.
 
-		mGenreLogic = new GenreListLogic();
-		mGenreLogic.findTitleView(findViewById(R.id.genres_outer_layout));
+		mAlbumLogic = new AlbumListLogic();
+		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
+
+		mSongLogic = new SongListLogic();
+		mSongLogic.findTitleView(findViewById(R.id.songlist_outer_layout));
 		
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
-				if (tabId.equals("tab_albums")) {
-					mAlbumLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
+				if (tabId.equals("genretab_artists")) {
+					mArtistLogic.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.artistlist_list));
 				}
-				if (tabId.equals("tab_files")) {
-					mFileLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
+				if (tabId.equals("genretab_albums")) {
+					mAlbumLogic.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.albumlist_list));
 				}
-				if (tabId.equals("tab_artists")) {
-					mArtistLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.artists_list));
-				}
-				if (tabId.equals("tab_genres")) {
-					mGenreLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.genres_list));
+				if (tabId.equals("genretab_songs")) {
+					mSongLogic.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.songlist_list));
 				}
 			}
 		});
-
 	}
 	
 	@Override
@@ -108,10 +96,13 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
+				mArtistLogic.onCreateContextMenu(menu, v, menuInfo);
+				break;
+			case 1:
 				mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 2:
-				mArtistLogic.onCreateContextMenu(menu, v, menuInfo);
+				mSongLogic.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
 	}
@@ -120,10 +111,13 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
+			mArtistLogic.onContextItemSelected(item);
+			break;
+		case 1:
 			mAlbumLogic.onContextItemSelected(item);
 			break;
 		case 2:
-			mArtistLogic.onContextItemSelected(item);
+			mSongLogic.onContextItemSelected(item);
 			break;
 		}
 		return super.onContextItemSelected(item);
