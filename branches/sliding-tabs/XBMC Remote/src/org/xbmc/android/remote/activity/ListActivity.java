@@ -23,8 +23,8 @@ package org.xbmc.android.remote.activity;
 
 import java.io.IOException;
 
-import org.xbmc.android.guilogic.ListLogic;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.guilogic.ListLogic;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;

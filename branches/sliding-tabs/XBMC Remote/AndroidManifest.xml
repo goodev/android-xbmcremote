@@ -15,7 +15,6 @@
         <activity android:name=".activity.MediaListActivity" />
         <activity android:name=".activity.NowPlayingActivity" />
         <activity android:name=".activity.AlbumGridActivity" />
-        <activity android:name=".activity.MediaTabContainerActivity" />
         <activity android:name=".activity.MusicLibraryActivity" />
         <activity android:name=".activity.MusicArtistActivity" />
         <activity android:name=".activity.ListActivity" />
