@@ -51,6 +51,8 @@ public class ArtistListLogic extends ListLogic {
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
 	public static final int ITEM_CONTEXT_INFO = 3;
+	public static final int ITEM_CONTEXT_QUEUE_GENRE = 4;
+	public static final int ITEM_CONTEXT_PLAY_GENRE = 5;
 	
 	private Genre mGenre;
 	
@@ -98,6 +100,11 @@ public class ArtistListLogic extends ListLogic {
 		menu.setHeaderTitle(artist.name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue all songs from Artist");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play all songs from Artist");
+		if (mGenre != null) {
+			menu.add(0, ITEM_CONTEXT_PLAY_GENRE, 3, "Play only " + mGenre.name + " from Artist");
+			menu.add(0, ITEM_CONTEXT_QUEUE_GENRE, 4, "Queue only " + mGenre.name + " from Artist");
+			
+		}
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
@@ -108,6 +115,12 @@ public class ArtistListLogic extends ListLogic {
 				break;
 			case ITEM_CONTEXT_PLAY:
 				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), artist);
+				break;
+			case ITEM_CONTEXT_QUEUE_GENRE:
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), artist, mGenre);
+				break;
+			case ITEM_CONTEXT_PLAY_GENRE:
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), artist, mGenre);
 				break;
 		}
 	}

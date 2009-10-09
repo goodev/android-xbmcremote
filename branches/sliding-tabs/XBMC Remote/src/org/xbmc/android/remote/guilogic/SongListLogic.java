@@ -171,6 +171,8 @@ public class SongListLogic extends ListLogic {
 				}, mAlbum, ThumbSize.small);
 			} else if (mArtist != null) {
 				subtitle.setText(song.album);
+			} else if (mGenre != null) {
+				subtitle.setText(song.artist);
 			}
 			return row;
 		}

@@ -248,6 +248,27 @@ public class MusicWrapper extends Wrapper {
 			}
 		});
 	}
+
+	/**
+	 * Adds all songs of a genre from an artist to the playlist. If nothing is playing, 
+	 * the first song will be played, otherwise songs are just added to the playlist.
+	 * @param handler Callback
+	 * @param artist 
+	 * @param genre 
+	 */
+	public void addToPlaylist(final HttpApiHandler<Song> handler, final Artist artist, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				final MusicClient mc = music(handler);
+				final ControlClient.PlayState ps = control(handler).getPlayState();
+				handler.value = mc.addToPlaylist(artist, genre);
+				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the first song
+					mc.play(handler.value);
+				}
+				done(handler);
+			}
+		});
+	}
 	
 	/**
 	 * Plays an album
@@ -286,6 +307,21 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = music(handler).play(artist);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Plays songs of a genre from an artist
+	 * @param handler Callback
+	 * @param artist Artist whose songs to play
+	 * @param genre  Genre filter
+	 */
+	public void play(final HttpApiHandler<Boolean> handler, final Artist artist, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).play(artist, genre);
 				done(handler);
 			}
 		});
