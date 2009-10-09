@@ -63,7 +63,7 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 
 		mTabHost.addTab(mTabHost.newTabSpec("genretab_artists", "Artists", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.artistlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("genretab_albums", "Albums", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.albumlist_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("genretab_songs", "Songs", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.songlist_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("genretab_songs", "Songs", R.drawable.st_song_on, R.drawable.st_song_off).setBigIcon(R.drawable.st_song_over).setContent(R.id.songlist_outer_layout));
 		mTabHost.setCurrentTab(0);
 		
 		mArtistLogic = new ArtistListLogic();

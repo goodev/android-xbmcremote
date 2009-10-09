@@ -70,9 +70,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		
 		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("tab_albums", "Albums", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.albumlist_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_artists", "Artists", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.artists_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_playlist_on, R.drawable.st_playlist_off).setBigIcon(R.drawable.st_playlist_over).setContent(R.id.genres_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genres_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		mTabHost.setCurrentTab(0);
 
 		// assign the gui logic to each tab
@@ -115,7 +115,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			case 0:
 				mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
 				break;
-			case 2:
+			case 1:
 				mArtistLogic.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
@@ -127,7 +127,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		case 0:
 			mAlbumLogic.onContextItemSelected(item);
 			break;
-		case 2:
+		case 1:
 			mArtistLogic.onContextItemSelected(item);
 			break;
 		}
