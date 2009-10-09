@@ -203,7 +203,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	}
 
 	private Intent createMediaIntent(MediaType mediaType, View v) {
-		Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
+		Intent myIntent = new Intent(v.getContext(), FileListActivity.class);
 		myIntent.putExtra("shareType", mediaType.toString());
 		return myIntent;
 	}

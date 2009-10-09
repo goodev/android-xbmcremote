@@ -44,7 +44,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class MediaListActivity extends ListActivity {
+public class FileListActivity extends ListActivity {
 	
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
@@ -71,7 +71,7 @@ public class MediaListActivity extends ListActivity {
 
 		MediaLocation item = mFileItems.get(l.getAdapter().getItem(position));
 		if (item.isDirectory) {
-			Intent nextActivity = new Intent(this, MediaListActivity.class);
+			Intent nextActivity = new Intent(this, FileListActivity.class);
 			nextActivity.putExtras(getIntent().getExtras());
 			nextActivity.putExtra("shareType", mMediaType.toString());
 			nextActivity.putExtra("path", item.path);
@@ -144,15 +144,15 @@ public class MediaListActivity extends ListActivity {
 			myIntent = new Intent(this, AlbumGridActivity.class);
 			break;
 		case 1:
-			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent = new Intent(this, FileListActivity.class);
 			myIntent.putExtra("shareType", MediaType.music.toString());
 			break;
 		case 2:
-			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent = new Intent(this, FileListActivity.class);
 			myIntent.putExtra("shareType", MediaType.video.toString());
 			break;
 		case 3:
-			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent = new Intent(this, FileListActivity.class);
 			myIntent.putExtra("shareType", MediaType.pictures.toString());
 			break;
 		case 4:
