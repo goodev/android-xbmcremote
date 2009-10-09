@@ -98,7 +98,7 @@ public class FileListLogic extends ListLogic {
 	private class FileItemAdapter extends ArrayAdapter<MediaLocation> {
 		private Activity mActivity;
 		FileItemAdapter(Activity activity, ArrayList<MediaLocation> items) {
-			super(activity, R.layout.music_item, items);
+			super(activity, R.layout.listitem_three, items);
 			mActivity = activity;
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -113,11 +113,6 @@ public class FileListLogic extends ListLogic {
 			row.setTag(fileItem);
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-			if (position == getCount() - 1) {
-				row.setBackgroundResource(R.drawable.back_bottom_rounded);
-			} else {
-				row.setBackgroundColor(0xfff8f8f8);
-			}
 			title.setText(fileItem.name);
 			icon.setImageResource(R.drawable.icon_folder);
 			return row;

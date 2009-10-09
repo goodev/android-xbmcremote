@@ -23,11 +23,11 @@
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:id="@+id/albumlist_outer_layout" android:orientation="vertical"
-				android:fadingEdge="none">
+				android:fadingEdge="none" >
 				<include layout="@layout/titlebar" />
 				<ListView android:layout_height="fill_parent"
 					android:layout_width="fill_parent" android:fadingEdge="none"
-					android:id="@+id/albumlist_list"></ListView>
+					android:id="@+id/albumlist_list"/>
 			</LinearLayout>
 
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

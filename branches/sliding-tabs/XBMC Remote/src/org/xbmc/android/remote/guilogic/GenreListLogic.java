@@ -114,11 +114,6 @@ public class GenreListLogic extends ListLogic {
 			final Genre genre = this.getItem(position);
 			row.setTag(genre);
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
-			if (position == getCount() - 1) {
-				row.setBackgroundResource(R.drawable.back_bottom_rounded);
-			} else {
-				row.setBackgroundColor(0xfff8f8f8);
-			}			
 			title.setText(genre.name);
 			return row;
 		}

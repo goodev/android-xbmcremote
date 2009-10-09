@@ -132,14 +132,14 @@ public class SongListLogic extends ListLogic {
 	private class SongAdapter extends ArrayAdapter<Song> {
 		private Activity mActivity;
 		SongAdapter(Activity activity, ArrayList<Song> items) {
-			super(activity, R.layout.music_item, items);
+			super(activity, R.layout.listitem_three, items);
 			mActivity = activity;
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row;
 			if (convertView == null) {
 				LayoutInflater inflater = mActivity.getLayoutInflater();
-				row = inflater.inflate(R.layout.music_item, null);
+				row = inflater.inflate(R.layout.listitem_three, null);
 			} else {
 				row = convertView;
 			}
@@ -149,11 +149,6 @@ public class SongListLogic extends ListLogic {
 			final TextView subtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubtitle);
 			final TextView subsubtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-			if (position == getCount() - 1) {
-				row.setBackgroundResource(R.drawable.back_bottom_rounded);
-			} else {
-				row.setBackgroundColor(0xfff8f8f8);
-			}			
 			title.setText(song.title);
 //			title.setText(song.track + " " + song.title);
 			subsubtitle.setText(song.getDuration());

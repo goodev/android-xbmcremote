@@ -26,12 +26,15 @@ import java.io.Serializable;
 import org.xbmc.android.remote.R;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public abstract class ListLogic implements Serializable {
 	
@@ -53,6 +56,18 @@ public abstract class ListLogic implements Serializable {
 		mList = list;
 		mActivity = activity;
 		isCreated = true;
+		
+		mList.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				Log.i("onItemSelected", "onItemSelected(<view>, <view>, " + arg2 + ", " + arg3);
+			}
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 	
 	public abstract void onContextItemSelected(MenuItem item);
