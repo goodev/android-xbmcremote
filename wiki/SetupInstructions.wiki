@@ -22,4 +22,4 @@ On start, click on the Menu button of your Android phone and choose Setting. The
 
 Click on Reconnect, and the bottom of your screen should display which version of XBMC you're running. If that's the case, your Android XBMC Remote is set up!
 
-http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/settings.png
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/settings.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/home.png
