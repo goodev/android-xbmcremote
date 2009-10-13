@@ -6,11 +6,11 @@
 In XBMC, go to _Settings_, _Network_. Under _Servers_, you'll need to enable the webserver. Note the port or in doubt set it to 8080. If you don't set a password, you can leave the username as it is. In this case you'll have clear the user/password option in the Andriod XBMC Remote app.
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/XBMC/httpserver.png
 
-Switch to _Event Server_ and make sure it is enabled, as well as the option _"Allow other computers to connect"_:
+Switch to _Event Server_ and make sure it is enabled, as well as the option _Allow other computers to connect_:
 
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/XBMC/eventserver.png
 
-In case you don't know the IP address of XBMC, you can display it by pressing "S" with the skin PM3.HD and the choose System Info:
+In case you don't know the IP address of XBMC, you can display it by pressing "S" with the skin PM3.HD and the choose _System Info_:
 
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/XBMC/s.png
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/XBMC/systeminfo.png
