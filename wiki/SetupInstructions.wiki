@@ -1,6 +1,8 @@
 #summary Setting up the Android remote client
 #labels Featured
 
+= XBMC =
+
 In XBMC, go to Settings, Network. Under Servers, you'll need to enable the webserver. Note the port or in doubt set it to 8080. If you don't set a password, you can leave the username as it is. In this case you'll have clear the user/password option in the Andriod XBMC Remote app.
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/XBMC/httpserver.png
 
