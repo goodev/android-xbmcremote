@@ -2,9 +2,9 @@
 #labels Featured
 
 
-Home screen, remote control in portait and landscape format:
+Home screen, "Now playing" screen, remote control in portait and landscape format:
 
-http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/home.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_portrait.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_landscape.png
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/home.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_portrait.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_landscape.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/now_playing.png 
 
 
 Music library root node. Browse by albums, artists, genres and file mode:
