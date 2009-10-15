@@ -2,15 +2,22 @@
 #labels Featured
 
 
-Home screen, "Now playing" screen, remote control in portait and landscape format:
+Home screen, remote control in portait and landscape format:
 
-http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/home.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_portrait.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_landscape.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/now_playing.png 
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/home.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_portrait.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_landscape.png 
+
+
+"Now playling" screen and our "sliding tabs" implementation:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/now_playing.png 
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/sliding_tabs.png 
 
 
 Music library root node. Browse by albums, artists, genres and file mode:
 
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/albums.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/artists.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/genres.png
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/files.png
+
 
 Artist node. Browse by album and songs of artist:
 
