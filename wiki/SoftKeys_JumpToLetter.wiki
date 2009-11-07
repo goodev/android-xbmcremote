@@ -1,5 +1,4 @@
 #summary Using the soft-keyboard to jump-to-letter in lists
-#labels Featured
 
 = How to use SoftKeys to Jump-to-Letter in list views =
 
