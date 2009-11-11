@@ -1,7 +1,46 @@
 #summary Screenshot Gallery
 #labels Featured
 
+= v0.6.x =
+== HVGA ==
+Home screen and about page:
 
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/home.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/about.png
+
+
+=== Music Library ===
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/albums.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/artists.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/genres.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/compilations.png
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/files.png
+
+Artists:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/artist.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/artist_songs.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/artist_songs_menu.png 
+
+Genres:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/genre_artists.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/genre_albums.png
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/genre_songs.png
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/genre_artists_menu.png
+
+"Now playing" screen and playlist:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/now_playing.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/playlist.png
+
+Sort options for songs, "sliding tabs":
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/songs_sort_options.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/sliding_tabs.png
+
+
+== WVGA ==
+
+Home screen and albums (more to come):
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/wvga/home.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/wvga/albums.png
+
+
+
+= v0.5.x =
 Home screen, remote control in portait and landscape format:
 
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/home.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_portrait.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.5.0/remote_landscape.png 
