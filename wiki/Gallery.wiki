@@ -32,6 +32,21 @@ Sort options for songs, "sliding tabs":
 http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/songs_sort_options.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/sliding_tabs.png
 
 
+=== Movie Library ===
+
+Movies, actors and genres:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movies.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/actors.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movie_genres.png
+
+Movies by actor and genre:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movie_actor.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movie_genre.png 
+
+Movie details:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movie_details1.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movie_details2.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movie_details3.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movie_details4.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.6.0/hvga/movie_details5.png 
+
+
 == WVGA ==
 
 Home screen and albums (more to come):
