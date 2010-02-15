@@ -1,5 +1,4 @@
 #summary Setting up the Android remote client
-#labels Featured
 
 = XBMC =
 
