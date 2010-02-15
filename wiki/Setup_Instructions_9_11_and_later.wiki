@@ -1,0 +1,23 @@
+#summary Setting up the remote with XBMC 9.11 final and later
+#labels Featured
+
+= Introduction =
+
+ # Make sure you have XBMC for android installed on your phone
+ # Make sure you have WIFI enabled and you are connected to your home network<br/>[http://img402.imageshack.us/img402/7183/snapshot2t.png]
+ # Open up your XBMC and navigate to Settings, System, Network (might not be in that same order, but you can find Network in your Settings Menu)
+ # Check these options: 
+  * Allow Control of XBMC via HTTP (Set port to 8080. Username and password can be whatever you would like)(Android phone auto capitalizes the username though, so make sure to use all caps in XBMC itself when setting it.)
+  * Allow Programs on this system to control XBMC
+  * Allow Programs on other systems to control XBMC<br />[http://img402.imageshack.us/img402/1236/snapshot3j.png]
+ # Open up XBMC for Andorid and click on Menu-->Settings, if it doesnt pop up automatically. Then click menu --> Add Host
+  * Name of this Instance (Put whatever you would like)
+  * Host or IP Address (Enter computers IP Address)
+  * HTTP API Port (8080)
+  * Username (Whatever you used to setup earlier in XBMC)
+  * Password (Whatever you used to setup earlier in XBMC)<br />[http://img402.imageshack.us/img402/7605/snapshot5c.png]
+ # Id recommened restarting both XBMC and XBMC for android. Load XBMC first though, then XBMC for android
+
+That should get it all working for you. That's what i did and it works fine for me and I'm running Camelot 9.11 also.
+
+_Thanks to *[http://forum.xbmc.org/member.php?u=63078 DonnyP]* who wrote this wiki page in the [http://forum.xbmc.org/showpost.php?p=498320&postcount=1005 XBMC Forum]_
