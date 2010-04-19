@@ -1,0 +1,19 @@
+==Key repeat too fast in remote control mode?==
+
+As reported in [http://code.google.com/p/android-xbmcremote/issues/detail?id=136 issue 136] Key repeats in remote control mode can be pretty fast.
+
+=== Fix/Workaround ===
+
+
+  * create advancedsettings.xml in your userdata folder (where also guisettings.xml is located)
+  * edit its content:
+
+{{{
+<advancedsettings>
+    <services>
+    	<esinitialdelay>750</esinitialdelay>
+    	<escontinuousdelay>25</escontinuousdelay>
+    </services>
+</advancedsettings>
+}}}
+  * the values above are the default values. Change how you like.
