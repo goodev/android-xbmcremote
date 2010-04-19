@@ -1,4 +1,5 @@
-==Key repeat too fast in remote control mode?==
+#summary Key repeat too fast in remote control mode?
+#labels Featured
 
 As reported in [http://code.google.com/p/android-xbmcremote/issues/detail?id=136 issue 136] Key repeats in remote control mode can be pretty fast.
 
