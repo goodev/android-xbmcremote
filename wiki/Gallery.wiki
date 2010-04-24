@@ -1,6 +1,40 @@
 #summary Screenshot Gallery
 #labels Featured
 
+
+= v0.7.x =
+== HVGA ==
+Newly textured remote control:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/hvga/remote_portrait.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/hvga/remote_landscape.png 
+
+TV shows library:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/hvga/tvshows.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/hvga/tvshows_seasons.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/hvga/tvshows_episodes.png 
+
+Smooth thumb resizing:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/hvga/compilations.png
+
+Remote control:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/wvga/remote_portrait.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/wvga/remote_landscape.png 
+
+Movie library:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/wvga/movies.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/wvga/movie_details.png 
+
+TV shows library:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/wvga/tvshows.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/wvga/tvshows_seasons.png http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/wvga/tvshows_episodes.png 
+
+
+== WVGA ==
+
+Home screen:
+
+http://android-xbmcremote.googlecode.com/svn/trunk/Documentation/Images/v0.7.0/wvga/home.png 
+
 = v0.6.x =
 == HVGA ==
 Home screen and about page:
