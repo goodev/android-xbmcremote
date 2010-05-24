@@ -1,0 +1,13 @@
+#XBMC Remote's permissions explained
+
+We don't like apps demanding permissions that don't seem obvious, so here we'll explain each permission XBMC Remote asks prior to installation:
+
+||_INTERNET_||We need to connect to XBMC. The _INTERNET_ permissions actually controls any socket, internet or not, so this is unavoidable.||
+||_ACCESS_NETWORK_STATE_, _ACCESS_WIFI_STATE_, _CHANGE_WIFI_STATE_||We've introduced an option that avoids connecting to XBMC when not connected to WiFi. In order to check this we need this permissions. ||
+||_VIBRATE_||Remote control screen lightly vibrates to give a more realistic user experience (configurable).||
+||_READ_PHONE_STATE_||We have a feature that pauses anything playing on incoming calls. In order to receive this event, we need this permission. ||
+||_RECEIVE_SMS_||The feature that displays SMS on the TV screen needs this permission in order to obtain the messages. ||
+||_READ_CONTACTS_||In order to display contact info (and picture) on incoming calls or messages, we need permission to read the phone book.||
+||_READ_SMS_||When displaying SMS, we actually display the first part of the message, so we'll need read permissions of SMS.||
+||_WAKE_LOCK_, _DISABLE_KEYGUARD_||A requested feature was overwriting the power manager to keep the processor from sleeping or the screen from dimming. This is configurable, but we'll need the permissions in any case (activated or not).||
+||_WRITE_EXTERNAL_STORAGE_||In order to save cover and poster thumbnails locally for caching purpose, we need write access to your SD card. This permission was introduced with Android 1.6.||
