@@ -1,4 +1,4 @@
-#XBMC Remote's permissions explained
+#summary XBMC Remote's permissions explained
 
 We don't like apps demanding permissions that don't seem obvious, so here we'll explain each permission XBMC Remote asks prior to installation:
 
