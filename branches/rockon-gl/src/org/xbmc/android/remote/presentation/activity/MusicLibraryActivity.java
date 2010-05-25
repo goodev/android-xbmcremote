@@ -23,6 +23,14 @@ package org.xbmc.android.remote.presentation.activity;
 
 import java.io.IOException;
 
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
+
+import org.abrantix.rockon.rockonnggl.Constants;
+import org.abrantix.rockon.rockonnggl.NavGLTouchListener;
+import org.abrantix.rockon.rockonnggl.RockOnRenderer;
+import org.abrantix.rockon.rockonnggl.RockOnWallRenderer;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.AlbumListController;
@@ -33,10 +41,14 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
 import org.xbmc.api.business.IEventClientManager;
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Intent;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -54,6 +66,56 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private MusicGenreListController mGenreController;
 	private AlbumListController mCompilationsController;
 	private FileListController mFileController;
+	
+	private RockOnRenderer mRockOnRenderer;
+	private GLSurfaceView mGlSurfaceView;
+	private int mBrowseCatMode;
+    private Handler mRequestRenderHandler = new Handler(){
+    	public void handleMessage(Message msg){
+    		if(mGlSurfaceView.getRenderMode() != msg.what)
+    			mGlSurfaceView.setRenderMode(msg.what);
+    	}
+    };
+    private Handler	mSetNavigatorCurrent = new Handler(){
+    	@Override
+    	public void handleMessage(Message msg){
+    		try {
+            	//updateNavigatorToCurrent(mService);
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+    	}
+    };
+    Handler mAlbumClickHandler = new Handler(){
+		int	x;
+		int	y;
+		@Override
+		public void handleMessage(Message msg){
+			x = msg.arg1;
+			y = msg.arg2;
+			if(msg.what == Constants.SINGLE_CLICK){
+				if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_ALBUM)
+				{
+					/* song list cursor */
+					int albumId = mRockOnRenderer.getShownElementId(x, y);
+					if(albumId < 0){
+						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+						return;
+					}
+				}
+				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_ARTIST)
+				{
+					/* song list cursor */
+					int artistId = mRockOnRenderer.getShownElementId(x, y);
+					if(artistId < 0){
+						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+						return;
+					}
+				}
+				
+			} 
+		}
+	};
 	
 	private static final int MENU_NOW_PLAYING = 301;
 	private static final int MENU_UPDATE_LIBRARY = 302;
@@ -85,8 +147,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
 		mAlbumController.findMessageView(findViewById(R.id.albumlist_outer_layout));
 //		mAlbumController.setGrid((GridView)findViewById(R.id.albumlist_grid));
-		mAlbumController.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
-
+//		mAlbumController.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
+		setupWallRenderer();
+		
 		mFileController = new FileListController();
 		mFileController.findTitleView(findViewById(R.id.filelist_outer_layout));
 		mFileController.findMessageView(findViewById(R.id.filelist_outer_layout));
@@ -108,7 +171,8 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			public void onTabChanged(String tabId) {
 				
 				if (tabId.equals("tab_albums")) {
-					mAlbumController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
+					//mAlbumController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
+					setupWallRenderer();
 				}
 				if (tabId.equals("tab_files")) {
 					mFileController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
@@ -126,6 +190,50 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		});
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
+	}
+	
+	private void setupWallRenderer() {
+		
+		/** Setup our 3d accelerated Surface */
+		mGlSurfaceView = (GLSurfaceView) findViewById(R.id.cube_surface_view);
+
+		/*************************************************
+		 * OPENGL ES HACK FOR GALAXY AND OTHERS
+		 *************************************************/
+		mGlSurfaceView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
+			public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+				int[] attributes = new int[] { EGL10.EGL_DEPTH_SIZE, 16, EGL10.EGL_NONE };
+				EGLConfig[] configs = new EGLConfig[1];
+				int[] result = new int[1];
+				egl.eglChooseConfig(display, attributes, configs, 1, result);
+				return configs[0];
+			}
+		});
+		/************************************************
+		 * HACK END
+		 ************************************************/
+		
+		mBrowseCatMode = Constants.BROWSECAT_ALBUM;
+		RockOnWallRenderer rockOnWallRenderer = new RockOnWallRenderer(getApplicationContext(), mRequestRenderHandler, Constants.THEME_NORMAL, mBrowseCatMode, (INotifiableManager)ManagerFactory.getMusicManager(mAlbumController));
+		mGlSurfaceView.setRenderer(rockOnWallRenderer);
+		mRockOnRenderer = (RockOnRenderer) rockOnWallRenderer;
+
+		mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
+		/** check if we were able to find any music */
+		if (mRockOnRenderer.getAlbumCount() <= 0) {
+			return;
+		} else {
+			if (mRockOnRenderer.getAlbumCursor() != null)
+				startManagingCursor(mRockOnRenderer.getAlbumCursor());
+		}
+		
+    	NavGLTouchListener 	navGLTouchListener = new NavGLTouchListener();
+//    	navGLTouchListener.setRenderer(mRockOnCubeRenderer);
+    	navGLTouchListener.setRenderer(mRockOnRenderer);
+    	navGLTouchListener.setClickHandler(mAlbumClickHandler);
+    	navGLTouchListener.setTimeoutHandler(mSetNavigatorCurrent);
+    	mGlSurfaceView.setOnTouchListener(navGLTouchListener);
 	}
 	
 	@Override

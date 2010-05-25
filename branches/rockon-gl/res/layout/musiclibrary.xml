@@ -27,7 +27,7 @@
 				android:fadingEdge="none" >
 				<include layout="@layout/titlebar" />
 				<include layout="@layout/listmessage" />
-				<org.xbmc.android.widget.FastScrollView
+				<!-- org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
 					<ListView 
@@ -35,15 +35,21 @@
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
 						style="@style/standard_list" />
-					<!-- >GridView 
+					<GridView 
 						android:id="@+id/albumlist_grid"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
 						android:numColumns="3" 
 						android:fadingEdge="none"
 						android:scrollbars="none"
-						android:visibility="gone" /-->
-				</org.xbmc.android.widget.FastScrollView>
+						android:visibility="gone" />
+				</org.xbmc.android.widget.FastScrollView-->
+				<android.opengl.GLSurfaceView
+					android:id="@+id/cube_surface_view"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:layout_margin="0dp"
+					/>
 			</LinearLayout>
 
             <!-- Files -->
