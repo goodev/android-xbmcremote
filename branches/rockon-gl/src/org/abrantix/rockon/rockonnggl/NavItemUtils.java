@@ -16,6 +16,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.StaleDataException;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -89,16 +90,10 @@ class NavItemUtils {
 	 */
 	boolean fillAlbumBitmap(NavItem albumNavItem, int width, int height, byte[] colorComponent, int theme) {
 		try {
-			/** Sanity check */
-			if (albumNavItem.cover.getWidth() != width || albumNavItem.cover.getHeight() != height) {
-				Log.i(TAG, " - reading pixels from file failed");
-				return false;
-			}
 
-			final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long
-					.parseLong(albumNavItem.albumKey)));
+			final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long.parseLong(albumNavItem.albumKey)));
 			if (file.exists()) {
-				albumNavItem.cover = BitmapFactory.decodeFile(file.getAbsolutePath());
+				albumNavItem.cover = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()), 256, 256, true);
 				return true;
 			}
 
