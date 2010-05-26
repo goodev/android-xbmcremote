@@ -13,13 +13,9 @@ public class Constants {
 	static final int THEME_EARTHQUAKE = 102;
 
 	/** Half Tone Theme */
-	static final int THEME_HALF_TONE_PROC_RESOLUTION = 640;
-	static final int THEME_HALF_TONE_BLOCK_COUNT = 64;
 	static final String THEME_HALF_TONE_FILE_EXT = ".halftone";
 
 	/** Earthquake Theme */
-	static final int THEME_EARTHQUAKE_BLOCK_COUNT = 256;
-	static final int THEME_EARTHQUAKE_RANDOM_AMOUNT = 16;
 	static final String THEME_EARTHQUAKE_FILE_EXT = ".earthquake";
 
 	/** UI scrolling parameters */

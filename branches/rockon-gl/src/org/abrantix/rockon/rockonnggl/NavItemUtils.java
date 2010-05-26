@@ -29,16 +29,8 @@ import android.util.Log;
 class NavItemUtils {
 	private final static String TAG = "AlbumNavItemUtils";
 
-	/** Code optimization */
-	private String albumCoverPath;
-	String artistName;
-	String albumName;
 	private String path;
-	private String albumStringSingular;
-	private String albumStringPlural;
 	private File albumCoverFile;
-	private Canvas canvas;
-	private RectF labelRectf;
 	private Paint labelBgPaint;
 	private Paint labelAlbumPaint;
 	private Paint labelArtistPaint;
@@ -46,11 +38,8 @@ class NavItemUtils {
 	private Paint labelArtistBoringPaint;
 
 	protected NavItemUtils(int width, int height, Context ctx) {
-		albumStringSingular = "Album";
-		albumStringPlural = "Albums";
-
-		canvas = new Canvas();
-		labelRectf = new RectF(0, 0, width, height / 4);
+		new Canvas();
+		new RectF(0, 0, width, height / 4);
 
 		labelBgPaint = new Paint();
 		labelBgPaint.setColor(Color.parseColor("#00000000"));
@@ -106,7 +95,6 @@ class NavItemUtils {
 				return false;
 			}
 
-			albumCoverPath = null;
 			final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long
 					.parseLong(albumNavItem.albumKey)));
 			if (file.exists()) {
@@ -133,7 +121,6 @@ class NavItemUtils {
 			/** Access the file */
 			albumCoverFile = new File(path);
 			if (albumCoverFile.exists() && albumCoverFile.length() > 0) {
-				albumCoverPath = path;
 			} else {
 				// Log.i(TAG, " - album cover bmp file has a problem "+path);
 				return false;
@@ -174,8 +161,6 @@ class NavItemUtils {
 				return false;
 			}
 
-			albumCoverPath = null;
-
 			/** Get the path to the album art */
 			switch (theme) {
 			case Constants.THEME_NORMAL:
@@ -195,7 +180,6 @@ class NavItemUtils {
 			/** Access the file */
 			albumCoverFile = new File(path);
 			if (albumCoverFile.exists() && albumCoverFile.length() > 0) {
-				albumCoverPath = path;
 			} else {
 				// Log.i(TAG, " - album cover bmp file has a problem "+path);
 				// AlbumArtUtils.saveSmallUnknownAlbumCoverInSdCard(res,
@@ -224,15 +208,6 @@ class NavItemUtils {
 			return false;
 		}
 	}
-
-	/**
-	 * 
-	 * @param artistNavItem
-	 * @param width
-	 * @param height
-	 * @return
-	 */
-	private String oNumberOfAlbumsString;
 
 	/**
 	 * fillAlbumInfo
@@ -337,8 +312,6 @@ class NavItemUtils {
 				return false;
 			}
 
-			albumCoverPath = null;
-
 			/** Get the path to the album art */
 			switch (theme) {
 			case Constants.THEME_NORMAL:
@@ -359,7 +332,6 @@ class NavItemUtils {
 			/** Access the file */
 			albumCoverFile = new File(path);
 			if (albumCoverFile.exists() && albumCoverFile.length() > 0) {
-				albumCoverPath = path;
 			} else {
 				// Log.i(TAG, " - album cover bmp file has a problem "+path);
 				return false;

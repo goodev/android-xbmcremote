@@ -79,7 +79,6 @@ public abstract class RockOnRenderer {
 	/** get the current position */
 	abstract int getShownPosition(float x, float y);
 
-	/** get the current Album/Artist/... Id */
 	public abstract int getShownElementId(float x, float y);
 
 	/** get the current Album Name */
