@@ -72,7 +72,8 @@ public abstract class ThumbSize {
 			case SMALL:
 				return (int)(50 * PIXEL_SCALE);
 			case MEDIUM:
-				return (int)(105 * PIXEL_SCALE);
+//				return (int)(105 * PIXEL_SCALE);
+				return (int)(256 * PIXEL_SCALE);
 			case BIG:
 				return (int)(400 * PIXEL_SCALE);
 			case SCREENWIDTH:
