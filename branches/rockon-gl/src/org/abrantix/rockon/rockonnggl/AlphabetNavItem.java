@@ -2,7 +2,7 @@ package org.abrantix.rockon.rockonnggl;
 
 import android.graphics.Bitmap;
 
-public class AlphabetNavItem{
+class AlphabetNavItem{
 	int		letter;
 	Bitmap	letterBitmap;
 }
