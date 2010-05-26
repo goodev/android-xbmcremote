@@ -191,7 +191,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		return (int) (mHeight * .4f);
 	}
 
-	
 	private float logisticFuncResult = 0.f;
 
 	public void onDrawFrame(GL10 gl) {
@@ -260,7 +259,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 				mClickAnimationStep++;
 			}
 		}
-		
 
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -289,7 +287,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			deltaToCenter = mNavItem[i].index - flooredPositionYTmp * 2;
 			// make it all positive
 			deltaToCenter += mCacheSize / 2 - 1; // (-4) negative numbers go bad
-													// with integer divisions
+			// with integer divisions
 
 			// optimizations, optimizations
 			// if(deltaToCenter < 0 || deltaToCenter > 11)
@@ -297,9 +295,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 			/* place the covers */
 			gl.glTranslatef(-1.f + i % 2 * 2.f, // we just dont need to use
-												// delta center here because the
-												// navigator always moves by 2
-												// positions (1 row)
+					// delta center here because the
+					// navigator always moves by 2
+					// positions (1 row)
 					-4.f + deltaToCenter / 2 * 2.f, 0);
 			gl.glTranslatef(0, -(positionYTmp - flooredPositionYTmp) * 2.f, 0);
 
@@ -404,9 +402,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 		this.mCenterTargetX = -1 + 2 * getRowAndColumnFromScreenCoordinates(x, y)[0];
 		this.mCenterTargetY = -2 + 2 * getRowAndColumnFromScreenCoordinates(x, y)[1]; // duplicated
-																						// effort
-																						// --
-																						// FIXME
+		// effort
+		// --
+		// FIXME
 		this.mCenterTargetZ = 0;
 
 		this.mCenterInitialX = this.mCenterX;
@@ -454,8 +452,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	}
 
 	private int albumIndexTmp;
-	
-	
+
 	private boolean changed;
 
 	private boolean updateTextures(GL10 gl) {
@@ -658,12 +655,18 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	}
 
 	/* optimization */
-	double itvlFromLastRender;
+	private double itvlFromLastRender;
 
 	private boolean updatePosition(boolean force) {
 
 		/** time independence */
-		itvlFromLastRender = Math.min(System.currentTimeMillis() - pTimestamp, 100) // 100ms is the biggest 'jump' we allow
+		itvlFromLastRender = Math.min(System.currentTimeMillis() - pTimestamp, 100) // 100ms
+																					// is
+																					// the
+																					// biggest
+																					// 'jump'
+																					// we
+																					// allow
 		* .001;
 		if (updateFraction > 0 && updateFraction < .05f)
 			updateFraction = Constants.CPU_SMOOTHNESS * itvlFromLastRender + (1 - Constants.CPU_SMOOTHNESS) * updateFraction;
@@ -675,25 +678,23 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 		/** optimization calculation */
 		flooredPositionY = (int) Math.floor(mPositionY);
-		positionOffsetY = mPositionY - flooredPositionY;
-
 		/**
 		 * New Y pivot
 		 */
 		if (mTargetPositionY > mPositionY)
 			mPositionY += Math.min(Math.min(Math.max(updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY - mPositionY), updateFraction
 					* .25f * Constants.MIN_SCROLL), mTargetPositionY - mPositionY), updateFraction * Constants.MAX_SCROLL * 3.f); // XXX
-																																	// *4.f
-																																	// is
-																																	// a
-																																	// HACK
+		// *4.f
+		// is
+		// a
+		// HACK
 		else if (mTargetPositionY < mPositionY)
 			mPositionY += Math.max(Math.max(Math.min(updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY - mPositionY), updateFraction
 					* .25f * -Constants.MIN_SCROLL), mTargetPositionY - mPositionY), updateFraction * -Constants.MAX_SCROLL * 3.f); // XXX
-																																	// *4.f
-																																	// is
-																																	// a
-																																	// HACK
+		// *4.f
+		// is
+		// a
+		// HACK
 
 		/** are we outside the limits of the album list? */
 		if (mCursor != null) {
@@ -814,9 +815,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	int getShownPosition(float x, float y) {
 		return getPositionFromScreenCoordinates(x, y);
 	}
-
-	/* optimization */
-	int cursorIdxValidation;
 
 	/** get the current Album Id */
 	public synchronized int getShownElementId(float x, float y) {
@@ -985,22 +983,15 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	private int mBrowseCat;
 	private int mTheme;
 	private int mCacheSize = 10; // 2 covers at the center row and then 2 more
-									// rows up and 2 more rows down
+	// rows up and 2 more rows down
 	private Context mContext;
 	// private Handler mRequestRenderHandler;
 	private RockOnCover mRockOnCover;
 	private int[] mTextureId = new int[mCacheSize]; // the number of textures
-													// must be equal to the
-													// number of faces of our
-													// shape
+	// must be equal to the
+	// number of faces of our
+	// shape
 	private int[] mTextureLabelId = new int[mCacheSize]; // the number of
-															// textures must be
-															// equal to the
-															// number of faces
-															// of our shape
-	// private int[] mTextureAlphabetId = new int[mCacheSize]; // the number of
-	// textures must be equal to the number of faces of our shape
-	private int mScrollMode = Constants.SCROLL_MODE_VERTICAL;
 	public boolean mClickAnimation = false;
 	private Cursor mCursor = null;
 	// private AlphabetNavItem[] mAlphabetNavItem = new
@@ -1048,15 +1039,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	 * optimization vars
 	 */
 	private double pTimestamp;
-	private int flooredPositionX;
 	private int flooredPositionY;
-	private float positionOffsetX;
-	private float positionOffsetY;
-	private float rotationAngleX;
-	private float rotationAngleY;
 	private boolean texturesUpdated;
 	private double updateFraction;
-	private int tmpTextureIdx;
 	private int deltaToCenter;
 	private float positionYTmp;
 	private int flooredPositionYTmp;
@@ -1091,9 +1076,9 @@ class RockOnCover {
 		// must have their byte order set to native order
 
 		ByteBuffer vbb = ByteBuffer.allocateDirect(VERTS * 3 * 4); // verts *
-																	// ncoords *
-																	// bytes per
-																	// vert??
+		// ncoords *
+		// bytes per
+		// vert??
 		vbb.order(ByteOrder.nativeOrder());
 		mFVertexBuffer = vbb.asFloatBuffer();
 
@@ -1153,8 +1138,6 @@ class RockOnCover {
 
 	/* number of vertices */
 	private final static int VERTS = 4;
-	private final int pointsPerFace = 4;
-
 	/* vertical scrolling buffers */
 	private FloatBuffer mFVertexBuffer;
 	private FloatBuffer mTexBuffer;
