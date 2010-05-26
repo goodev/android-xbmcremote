@@ -26,26 +26,26 @@ import android.graphics.Paint.Style;
 import android.provider.MediaStore;
 import android.util.Log;
 
-public class NavItemUtils {
-	final String TAG = "AlbumNavItemUtils";
+class NavItemUtils {
+	private final static String TAG = "AlbumNavItemUtils";
 
 	/** Code optimization */
-	String albumCoverPath;
+	private String albumCoverPath;
 	String artistName;
 	String albumName;
-	String path;
-	String albumStringSingular;
-	String albumStringPlural;
-	File albumCoverFile;
-	Canvas canvas;
-	RectF labelRectf;
-	Paint labelBgPaint;
-	Paint labelAlbumPaint;
-	Paint labelArtistPaint;
-	Paint labelAlbumBoringPaint;
-	Paint labelArtistBoringPaint;
+	private String path;
+	private String albumStringSingular;
+	private String albumStringPlural;
+	private File albumCoverFile;
+	private Canvas canvas;
+	private RectF labelRectf;
+	private Paint labelBgPaint;
+	private Paint labelAlbumPaint;
+	private Paint labelArtistPaint;
+	private Paint labelAlbumBoringPaint;
+	private Paint labelArtistBoringPaint;
 
-	public NavItemUtils(int width, int height, Context ctx) {
+	protected NavItemUtils(int width, int height, Context ctx) {
 		albumStringSingular = "Album";
 		albumStringPlural = "Albums";
 
@@ -107,7 +107,8 @@ public class NavItemUtils {
 			}
 
 			albumCoverPath = null;
-			final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long.parseLong(albumNavItem.albumKey)));
+			final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long
+					.parseLong(albumNavItem.albumKey)));
 			if (file.exists()) {
 				albumNavItem.cover = BitmapFactory.decodeFile(file.getAbsolutePath());
 				return true;
@@ -197,9 +198,11 @@ public class NavItemUtils {
 				albumCoverPath = path;
 			} else {
 				// Log.i(TAG, " - album cover bmp file has a problem "+path);
-				AlbumArtUtils.saveSmallUnknownAlbumCoverInSdCard(res, colorComponent, path, theme);
-				if (!albumCoverFile.exists() || !(albumCoverFile.length() > 0))
-					return false;
+				// AlbumArtUtils.saveSmallUnknownAlbumCoverInSdCard(res,
+				// colorComponent, path, theme);
+				// if (!albumCoverFile.exists() || !(albumCoverFile.length() >
+				// 0))
+				return false;
 			}
 
 			/** Read File and fill bitmap */
@@ -223,178 +226,13 @@ public class NavItemUtils {
 	}
 
 	/**
-	 * fill alphabet bitmap
-	 * 
-	 * @param bitmap
-	 * @param letter
-	 * @return
-	 */
-	boolean fillAlphabetBitmap(AlphabetNavItem alphaNavItem, int width, int height) {
-
-		try {
-			/** Sanity check */
-			if (alphaNavItem.letterBitmap.getWidth() != width || alphaNavItem.letterBitmap.getHeight() != height) {
-				Log.i(TAG, " - reading pixels from file failed");
-				return false;
-			}
-
-			/** Create bitmap */
-			alphaNavItem.letterBitmap.eraseColor(Color.parseColor("#00000000"));
-			canvas.setBitmap(alphaNavItem.letterBitmap);
-			if (alphaNavItem.letter >= 'a') {
-				labelAlbumPaint.setTextSize(.60f * height);
-				canvas.drawText(String.valueOf((char) alphaNavItem.letter), .5f * width, (.5f + .2f) * height, // -.2f
-																												// is
-																												// half
-																												// of
-																												// the
-																												// font
-																												// size
-																												// so
-																												// that
-																												// we
-																												// can
-																												// center
-																												// it
-						labelAlbumPaint);
-			} else if (alphaNavItem.letter == 'a' - 1) {
-				labelAlbumPaint.setTextSize(.3f * height);
-				canvas.drawText("123", .5f * width, (.5f + .0f) * height, // -.2f
-																			// is
-																			// half
-																			// of
-																			// the
-																			// font
-																			// size
-																			// so
-																			// that
-																			// we
-																			// can
-																			// center
-																			// it
-						labelAlbumPaint);
-				canvas.drawText("_>?", .5f * width, (.5f + .32f) * height, // -.2f
-																			// is
-																			// half
-																			// of
-																			// the
-																			// font
-																			// size
-																			// so
-																			// that
-																			// we
-																			// can
-																			// center
-																			// it
-						labelAlbumPaint);
-			}
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	/**
-	 * fillAlbumLabel
-	 * 
-	 * @param albumNavItem
-	 * @param width
-	 * @param height
-	 * @return
-	 */
-	boolean fillAlbumLabel(NavItem albumNavItem, int width, int height) {
-		/** Sanity check */
-		if (albumNavItem == null || albumNavItem.label == null || albumNavItem.label.isRecycled() || albumNavItem.label.getWidth() != width
-				|| albumNavItem.label.getHeight() != height) {
-			Log.i(TAG, " - reading pixels from file failed");
-			return false;
-		}
-		/** Create bitmap */
-		albumNavItem.label.eraseColor(Color.argb(0, 0, 0, 0));
-		canvas.setBitmap(albumNavItem.label);
-		canvas.drawRoundRect(labelRectf, height / 8, height / 8, labelBgPaint);
-		labelAlbumPaint.setTextSize(.28f * height);
-		labelArtistPaint.setTextSize(.24f * height);
-		if (albumNavItem.albumName != null) {
-			canvas.drawText(albumNavItem.albumName.substring(0, labelAlbumPaint.breakText(albumNavItem.albumName, false, width * 0.95f, null)), .5f * width,
-					.5f * height, labelAlbumPaint);
-		}
-		if (albumNavItem.artistName != null) {
-			canvas.drawText(albumNavItem.artistName.substring(0, labelArtistPaint.breakText(albumNavItem.artistName, false, width * .95f, null)), .5f * width,
-					.9f * height, labelArtistPaint);
-		}
-
-		return true;
-	}
-
-	/**
-	 * fillAlbumBoringLabel
-	 * 
-	 * @param albumNavItem
-	 * @param width
-	 * @param height
-	 * @return
-	 */
-	boolean fillAlbumBoringLabel(NavItem albumNavItem, int width, int height) {
-		/** Sanity check */
-		if (albumNavItem.label.getWidth() != width || albumNavItem.label.getHeight() != height) {
-			Log.i(TAG, " - reading pixels from file failed");
-			return false;
-		}
-		/** Create bitmap */
-		albumNavItem.label.eraseColor(Color.argb(0, 0, 0, 0));
-		canvas.setBitmap(albumNavItem.label);
-		// canvas.drawRoundRect(labelRectf, height/8, height/8, labelBgPaint);
-		labelAlbumBoringPaint.setTextSize(.24f * height);
-		labelArtistBoringPaint.setTextSize(.48f * height);
-		if (albumNavItem.artistName != null) {
-			canvas.drawText(albumNavItem.artistName.substring(0, labelArtistBoringPaint.breakText(albumNavItem.artistName, false, width * .95f, null)),
-					0.f * width, .5f * height, labelArtistBoringPaint);
-		}
-		if (albumNavItem.albumName != null) {
-			canvas.drawText(albumNavItem.albumName.substring(0, labelAlbumBoringPaint.breakText(albumNavItem.albumName, false, width * 0.95f, null)),
-					0.f * width, .9f * height, labelAlbumBoringPaint);
-		}
-
-		return true;
-	}
-
-	/**
 	 * 
 	 * @param artistNavItem
 	 * @param width
 	 * @param height
 	 * @return
 	 */
-	String oNumberOfAlbumsString;
-
-	boolean fillArtistBoringLabel(NavItem artistNavItem, int width, int height) {
-		/** Sanity check */
-		if (artistNavItem.label.getWidth() != width || artistNavItem.label.getHeight() != height) {
-			Log.i(TAG, " - reading pixels from file failed");
-			return false;
-		}
-		/** Create bitmap */
-		artistNavItem.label.eraseColor(Color.argb(0, 0, 0, 0));
-		canvas.setBitmap(artistNavItem.label);
-		// canvas.drawRoundRect(labelRectf, height/8, height/8, labelBgPaint);
-		labelAlbumBoringPaint.setTextSize(.24f * height);
-		labelArtistBoringPaint.setTextSize(.48f * height);
-		if (artistNavItem.artistName != null) {
-			canvas.drawText(artistNavItem.artistName.substring(0, labelAlbumBoringPaint.breakText(artistNavItem.artistName, false, width * 0.95f, null)),
-					0.f * width, .5f * height, labelArtistBoringPaint);
-		}
-		if (artistNavItem.nAlbumsFromArtist > 0) {
-			if (artistNavItem.nAlbumsFromArtist == 1)
-				oNumberOfAlbumsString = String.valueOf(artistNavItem.nAlbumsFromArtist) + " " + albumStringSingular;
-			else
-				oNumberOfAlbumsString = String.valueOf(artistNavItem.nAlbumsFromArtist) + " " + albumStringPlural;
-			canvas.drawText(oNumberOfAlbumsString, 0.f * width, .9f * height, labelAlbumBoringPaint);
-		}
-
-		return true;
-	}
+	private String oNumberOfAlbumsString;
 
 	/**
 	 * fillAlbumInfo
@@ -547,45 +385,4 @@ public class NavItemUtils {
 		}
 	}
 
-	/**
-	 * 
-	 * @param navItem
-	 * @param width
-	 * @param height
-	 * @return
-	 */
-	boolean fillArtistLabel(NavItem navItem, int width, int height) {
-		/** Sanity check */
-		if (navItem == null || navItem.label == null || navItem.label.isRecycled() || navItem.label.getWidth() != width || navItem.label.getHeight() != height) {
-			Log.i(TAG, " - reading pixels from file failed");
-			return false;
-		}
-		/** Create bitmap */
-		navItem.label.eraseColor(Color.argb(0, 0, 0, 0));
-		canvas.setBitmap(navItem.label);
-		canvas.drawRoundRect(labelRectf, height / 8, height / 8, labelBgPaint);
-		labelAlbumPaint.setTextSize(.28f * height); // will use it for Artist
-													// Name
-		labelArtistPaint.setTextSize(.24f * height); // will use it for album
-														// count
-		if (navItem.artistName != null) {
-			canvas.drawText(navItem.artistName.substring(0, labelAlbumPaint.breakText(navItem.artistName, false, width * 0.95f, null)), .5f * width,
-					.5f * height, labelAlbumPaint);
-		}
-		// if(navItem.nAlbumsFromArtist > 0){
-		// canvas.drawText(
-		// navItem.artistName.substring(
-		// 0,
-		// labelArtistPaint.breakText(
-		// String.valueOf(navItem.nAlbumsFromArtist) + ,
-		// false,
-		// width*.95f,
-		// null)),
-		// .5f * width,
-		// .9f * height,
-		// labelArtistPaint);
-		// }
-
-		return true;
-	}
 }

@@ -25,12 +25,9 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 
 public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.Renderer {
-
-	final String TAG = "RockOnWallRenderer";
 
 	public void renderNow() {
 		// if(!mIsRendering)
@@ -63,22 +60,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 		/** init album cursor **/
 		if (mCursor == null || force) {
-			CursorUtils cursorUtils = new CursorUtils(context);
-			if (browseCat == Constants.BROWSECAT_ARTIST) {
-				Cursor helperCursor = cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
-				mCursor = helperCursor;
-				// Let's add the audio id to the artist list so we can get art
-				// double t = System.currentTimeMillis();
-				if (mCursor != null && mCursor.getCount() > 0) {
-					mArtistAlbumHelper = new ArtistAlbumHelper[mCursor.getCount()];
-					cursorUtils.fillArtistAlbumHelperArray(mCursor, mArtistAlbumHelper);
-				}
-				// Log.i(TAG, "+ "+(System.currentTimeMillis()-t));
-			} else // ALBUM
-			{
-				Cursor helperCursor = cursorUtils.getAlbumListFromPlaylist(manager, context);
-				mCursor = helperCursor;
-			}
+			CursorUtils cursorUtils = new CursorUtils();
+			Cursor helperCursor = cursorUtils.getAlbumListFromPlaylist(manager, context);
+			mCursor = helperCursor;
 		}
 
 		/** init dimensions */
@@ -207,9 +191,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		return (int) (mHeight * .4f);
 	}
 
-	/* optmization */
-	float distanceToRotationLimits = 0.f;
-	float logisticFuncResult = 0.f;
+	
+	private float logisticFuncResult = 0.f;
 
 	public void onDrawFrame(GL10 gl) {
 
@@ -356,8 +339,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	}
 
 	/* optimization */
-	int rowFromY;
-	int columnFromX;
+	private int rowFromY;
+	private int columnFromX;
 
 	/**
 	 * 
@@ -365,7 +348,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	 * @param y
 	 * @return
 	 */
-	int getPositionFromScreenCoordinates(float x, float y) {
+	private int getPositionFromScreenCoordinates(float x, float y) {
 		rowFromY = (int) (y / (mHeight * .25f));
 		if (rowFromY == 2)
 			rowFromY--;
@@ -377,12 +360,12 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		return flooredPositionY * 2 - 2 + 2 * rowFromY + columnFromX;
 	}
 
-	int getVerifiedPositionFromScreenCoordinates(float x, float y) {
+	private int getVerifiedPositionFromScreenCoordinates(float x, float y) {
 		return Math.min(Math.max(getPositionFromScreenCoordinates(x, y), 0), mCursor.getCount() - 1);
 	}
 
 	/* optimization */
-	int[] rowAndColumn = new int[2];
+	private int[] rowAndColumn = new int[2];
 
 	/**
 	 * 
@@ -390,7 +373,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	 * @param y
 	 * @return
 	 */
-	int[] getRowAndColumnFromScreenCoordinates(float x, float y) {
+	private int[] getRowAndColumnFromScreenCoordinates(float x, float y) {
 		rowFromY = (int) (y / (mHeight * .25f));
 		if (rowFromY == 2)
 			rowFromY--;
@@ -470,11 +453,10 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		this.renderNow();
 	}
 
-	int albumIndexTmp;
-	// int alphabetIndexTmp;
-	int lastInitial = -1;
-	int charTmp;
-	boolean changed;
+	private int albumIndexTmp;
+	
+	
+	private boolean changed;
 
 	private boolean updateTextures(GL10 gl) {
 		changed = false;
@@ -507,12 +489,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		return changed;
 	}
 
-	Bitmap undefined = Bitmap.createBitmap(Constants.REASONABLE_ALBUM_ART_SIZE, Constants.REASONABLE_ALBUM_ART_SIZE, Bitmap.Config.RGB_565);
-
-	/* optimization */
-	int cacheIdxTmp;
-	NavItem albumNavItemTmp;
-	boolean reusedCached = false;
+	private Bitmap undefined = Bitmap.createBitmap(Constants.REASONABLE_ALBUM_ART_SIZE, Constants.REASONABLE_ALBUM_ART_SIZE, Bitmap.Config.RGB_565);
 
 	/**
 	 * fills the albumNavItem structure with the cover bitmap, labels, etc
@@ -686,14 +663,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	private boolean updatePosition(boolean force) {
 
 		/** time independence */
-		itvlFromLastRender = Math.min(System.currentTimeMillis() - pTimestamp, 100) // 100
-																					// ms
-																					// is
-																					// the
-																					// biggest
-																					// 'jump'
-																					// we
-																					// allow
+		itvlFromLastRender = Math.min(System.currentTimeMillis() - pTimestamp, 100) // 100ms is the biggest 'jump' we allow
 		* .001;
 		if (updateFraction > 0 && updateFraction < .05f)
 			updateFraction = Constants.CPU_SMOOTHNESS * itvlFromLastRender + (1 - Constants.CPU_SMOOTHNESS) * updateFraction;
@@ -1093,8 +1063,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 }
 
 class RockOnCover {
-
-	private final String TAG = "RockOnCover";
 
 	public RockOnCover() {
 		// public RockOnCover(int[] textureId, int[] textureAlphabetId) {

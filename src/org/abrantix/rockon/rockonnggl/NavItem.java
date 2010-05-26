@@ -2,7 +2,7 @@ package org.abrantix.rockon.rockonnggl;
 
 import android.graphics.Bitmap;
 
-public class NavItem{
+class NavItem{
 	int		index;
 	Bitmap	cover;
 	Bitmap	label;
