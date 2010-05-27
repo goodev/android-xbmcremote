@@ -1,5 +1,7 @@
 package org.abrantix.rockon.rockonnggl;
 
+import org.xbmc.api.type.ThumbSize;
+
 public class Constants {
 
 	/** Browse Categories **/
@@ -52,8 +54,8 @@ public class Constants {
 	public static final int CLICK_ACTION_DELAY = 250;
 
 	/** Album Art Stuff */
-	static final int REASONABLE_ALBUM_ART_SIZE = 256;
-	static final int ALBUM_ART_TEXTURE_SIZE = 256;
+	static final int REASONABLE_ALBUM_ART_SIZE = ThumbSize.MEDIUM;
+	static final int ALBUM_ART_TEXTURE_SIZE = ThumbSize.MEDIUM;
 
 	/** PLAY QUEUE SIZE WHEN NOT SPECIFICALLY DEFINED */
 

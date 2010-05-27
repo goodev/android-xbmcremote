@@ -1,7 +1,3 @@
-/*
- * 
- */
-
 package org.abrantix.rockon.rockonnggl;
 
 import java.nio.ByteBuffer;
@@ -33,7 +29,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	private static final String TAG = "RockOnWallRenderer";
 
 	public void renderNow() {
-		// if(!mIsRendering)
 		mRequestRenderHandler.sendEmptyMessage(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 	}
 
@@ -46,7 +41,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		mRequestRenderHandler = requestRenderHandler;
 		mTheme = theme;
 		mBrowseCat = browseCat;
-
 		initNonGlVars(context, mBrowseCat, false, manager);
 	}
 
@@ -56,7 +50,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		mPositionX = 0;
 		mTargetPositionX = 0;
 		initNonGlVars(mContext, mBrowseCat, true, null);
-		this.triggerPositionUpdate();
+		triggerPositionUpdate();
 	}
 
 	private void initNonGlVars(Context context, int browseCat, boolean force, INotifiableManager manager) {
@@ -80,7 +74,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			NavItem n = new NavItem();
 			n.index = -1;
 			n.cover = Bitmap.createBitmap(mBitmapWidth, mBitmapHeight, Bitmap.Config.RGB_565);
-			n.label = Bitmap.createBitmap(mBitmapWidth, mBitmapHeight / 4, Bitmap.Config.ARGB_8888);
 			mNavItem[i] = n;
 		}
 		mColorComponentBuffer = new byte[4 * mBitmapWidth * mBitmapHeight];
@@ -284,7 +277,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, mCenterX, mCenterY, mCenterZ, 0f, -1.0f, 0.0f);
 
 			// poor variable name -- dont mind it
-			deltaToCenter = mNavItem[i].index - flooredPositionYTmp * 2;
+			deltaToCenter = mNavItem[i].index - flooredPositionYTmp * 3;
 			
 			// make it all positive
 			deltaToCenter += mCacheSize / 2 - 1; // (-4) negative numbers go bad
@@ -300,8 +293,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			 * always moves by 2 positions (1 row)
 			 */
 //			float x = -1.f + i % 2 * 2.f;
-			float x = -1.f + i % 2 * 2.f;
-			float y = -4.f + deltaToCenter / 2 * 2.f;
+			float x = -2.f + i % 3 * 2.f;
+			float y = -4.f + deltaToCenter / 3 * 2.f;
 			
 			// grid position
 			gl.glTranslatef(x, y, 0.0f);
@@ -588,7 +581,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 			/** bind new texture */
 			bindTexture(gl, mNavItem[cacheIndex].cover, mTextureId[cacheIndex]);
-			bindTexture(gl, mNavItem[cacheIndex].label, mTextureLabelId[cacheIndex]);
 
 			return true;
 		} else {
@@ -969,7 +961,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		for (int i = 0; i < mNavItem.length; i++) {
 			try {
 				mNavItem[i].cover.recycle();
-				mNavItem[i].label.recycle();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -981,7 +972,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	 */
 	private int mBrowseCat;
 	private int mTheme;
-	private int mCacheSize = 10; // 2 covers at the center row and then 2 more
+	private int mCacheSize = 21; // 2 covers at the center row and then 2 more
 	// rows up and 2 more rows down
 	private Context mContext;
 	// private Handler mRequestRenderHandler;
@@ -991,7 +982,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	// number of faces of our
 	// shape
 	private int[] mTextureLabelId = new int[mCacheSize]; // the number of
-	public boolean mClickAnimation = false;
+	private boolean mClickAnimation = false;
 	private Cursor mCursor = null;
 	// private AlphabetNavItem[] mAlphabetNavItem = new
 	// AlphabetNavItem[mCacheSize];
@@ -1148,5 +1139,5 @@ class RockOnCover {
 	private ShortBuffer mIndexBuffer;
 
 	/** our 4 vertical face textures */
-	public int mTextureId;
+	private int mTextureId;
 }

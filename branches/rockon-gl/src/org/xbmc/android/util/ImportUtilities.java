@@ -67,19 +67,28 @@ public abstract class ImportUtilities {
     }
     
     public static boolean loadBitmap(ICoverArt cover, Bitmap bitmap, int thumbSize) {
-    	final FileInputStream albumCoverFileInputStream  = ImportUtilities.getCacheFileInputStream(MediaType.getArtFolder(cover.getMediaType()), thumbSize, Crc32.formatAsHexLowerCase(cover.getCrc()));
-    	if (albumCoverFileInputStream == null) {
+    		
+    	final File file  = ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), thumbSize, Crc32.formatAsHexLowerCase(cover.getCrc()));
+    	if (file.exists()) {
+    		bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+    		return true;
+    	} else {
     		return false;
     	}
-    	try {
-    		final byte[] buffer = thumbSize == ThumbSize.SMALL ? BUFFER_SMALL : BUFFER_MEDIUM;
-			albumCoverFileInputStream.read(buffer, 0, buffer.length);
-			bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(buffer)); 
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+    	
+//    	final FileInputStream albumCoverFileInputStream  = ImportUtilities.getCacheFileInputStream(MediaType.getArtFolder(cover.getMediaType()), thumbSize, Crc32.formatAsHexLowerCase(cover.getCrc()));
+//    	if (albumCoverFileInputStream == null) {
+//    		return false;
+//    	}
+//    	try {
+//    		final byte[] buffer = thumbSize == ThumbSize.SMALL ? BUFFER_SMALL : BUFFER_MEDIUM;
+//			albumCoverFileInputStream.read(buffer, 0, buffer.length);
+//			bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(buffer)); 
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return false;
+//		}
+//		return true;
     }
     
     public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, int thumbSize) {
@@ -106,20 +115,36 @@ public abstract class ImportUtilities {
     			final Bitmap resizing = resized == null ? bitmap : resized;
     			Dimension uncroppedDim = ThumbSize.getDimension(currentThumbSize, mediaType, resizing.getWidth(), resizing.getHeight());
     			Dimension targetDim = ThumbSize.getTargetDimension(currentThumbSize, mediaType, resizing.getWidth(), resizing.getHeight());
-    			// TODO: crop
+
     			Log.i(TAG, "Resizing to: " + uncroppedDim + " in order to fit into " + targetDim);
-    			
 				resized = Bitmap.createScaledBitmap(resizing, uncroppedDim.x, uncroppedDim.y, true);
-				final FileOutputStream fileOutStream = new FileOutputStream(coverFile);
 
-				ByteBuffer bitmapBuffer = ByteBuffer.allocate(resized.getRowBytes() * resized.getHeight());
-				resized.copyPixelsToBuffer(bitmapBuffer);
-				fileOutStream.write(bitmapBuffer.array());
+				// crop
+				final Bitmap cropped;
+				if (!uncroppedDim.equals(targetDim)) {
+					if (uncroppedDim.x != targetDim.x) {
+						final int dx = (uncroppedDim.x - targetDim.x) / 2;
+						cropped = Bitmap.createBitmap(resized, dx, 0, targetDim.x, targetDim.y);
+						Log.i(TAG, "Horizontally cropping with dx = " + dx + ".");
+					} else {
+						final int dy = (uncroppedDim.y - targetDim.y) / 2;
+						Log.i(TAG, "Vertically cropping with dy = " + dy + ".");
+						cropped = Bitmap.createBitmap(resized, 0, dy, targetDim.x, targetDim.y);
+					}
+				} else {
+					Log.i(TAG, "Dimension matches, skipping cropping.");
+					cropped = resized;
+				}
+//				final FileOutputStream fileOutStream = new FileOutputStream(coverFile);
 
-//				resized.compress(Bitmap.CompressFormat.JPEG, 85, new FileOutputStream(coverFile));
+//				ByteBuffer bitmapBuffer = ByteBuffer.allocate(cropped.getRowBytes() * cropped.getHeight());
+//				cropped.copyPixelsToBuffer(bitmapBuffer);
+//				fileOutStream.write(bitmapBuffer.array());
+
+				cropped.compress(Bitmap.CompressFormat.JPEG, 85, new FileOutputStream(coverFile));
 
     			if (thumbSize == currentThumbSize) {
-    				sizeToReturn = resized;
+    				sizeToReturn = cropped;
     			}
     			
     		} catch (FileNotFoundException e) {
