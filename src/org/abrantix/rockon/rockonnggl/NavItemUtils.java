@@ -37,6 +37,8 @@ class NavItemUtils {
 	private Paint labelArtistPaint;
 	private Paint labelAlbumBoringPaint;
 	private Paint labelArtistBoringPaint;
+	
+	private static final byte[] BUFFER = new byte[4 * ThumbSize.getPixel(ThumbSize.MEDIUM) * ThumbSize.getPixel(ThumbSize.MEDIUM)];
 
 	protected NavItemUtils(int width, int height, Context ctx) {
 		new Canvas();
@@ -91,11 +93,17 @@ class NavItemUtils {
 	boolean fillAlbumBitmap(NavItem albumNavItem, int width, int height, byte[] colorComponent, int theme) {
 		try {
 
-			final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long.parseLong(albumNavItem.albumKey)));
-			if (file.exists()) {
-				albumNavItem.cover = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()), 256, 256, true);
-				return true;
-			}
+			final File f = ImportUtilities.getCacheFile(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long.parseLong(albumNavItem.albumKey)));
+			albumNavItem.cover = BitmapFactory.decodeFile(f.getAbsolutePath());
+			
+//			final FileInputStream is = ImportUtilities.getCacheFileInputStream(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long.parseLong(albumNavItem.albumKey)));
+//			if (is != null) {
+//				is.read(BUFFER, 0, BUFFER.length);
+//				albumNavItem.cover.copyPixelsFromBuffer(ByteBuffer.wrap(BUFFER)); 
+//				return true;
+//			} else {
+//				Log.i(TAG, "Cannot find cover " + albumNavItem.albumKey);
+//			}
 
 			/** Get the path to the album art */
 			switch (theme) {

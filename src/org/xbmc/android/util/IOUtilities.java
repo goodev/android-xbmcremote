@@ -25,9 +25,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.os.Environment;
+import android.util.Log;
 
 public final class IOUtilities {
-    private static final String LOG_TAG = "IOUtilities";
+    private static final String TAG = "IOUtilities";
 
     public static final int IO_BUFFER_SIZE = 4 * 1024;
 
@@ -37,7 +38,8 @@ public final class IOUtilities {
     
     public static FileInputStream getExternalFileInputStream(String file) {
     	try {
-			return new FileInputStream(Environment.getExternalStorageDirectory() + file);
+    		Log.i(TAG, "Looking for file " + file);
+			return new FileInputStream(Environment.getExternalStorageDirectory() + "/" + file);
 		} catch (FileNotFoundException e) {
 			return null;
 		}
@@ -70,7 +72,7 @@ public final class IOUtilities {
             try {
                 stream.close();
             } catch (IOException e) {
-                android.util.Log.e(LOG_TAG, "Could not close stream", e);
+                android.util.Log.e(TAG, "Could not close stream", e);
             }
         }
     }
