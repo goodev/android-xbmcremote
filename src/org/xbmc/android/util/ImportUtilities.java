@@ -17,9 +17,11 @@
 package org.xbmc.android.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.MediaType;
@@ -37,6 +39,8 @@ public abstract class ImportUtilities {
 	private static final String TAG = "ImportUtilities";
     private static final String CACHE_DIRECTORY = "xbmc";
     private static final double MIN_FREE_SPACE = 3;
+    private static final byte[] BUFFER_SMALL = new byte[4 * ThumbSize.getPixel(ThumbSize.SMALL) * ThumbSize.getPixel(ThumbSize.SMALL)];
+    private static final byte[] BUFFER_MEDIUM = new byte[4 * ThumbSize.getPixel(ThumbSize.MEDIUM) * ThumbSize.getPixel(ThumbSize.MEDIUM)];
 
     public static File getCacheDirectory(String type, int size) {
     	StringBuilder sb = new StringBuilder(CACHE_DIRECTORY);
@@ -45,16 +49,38 @@ public abstract class ImportUtilities {
         return IOUtilities.getExternalFile(sb.toString());
     }
     
-    public static File getCacheFile(String type, int size, String name) {
+    private static String getCacheFileName(String type, int size, String name) {
     	StringBuilder sb = new StringBuilder(32);
     	sb.append(CACHE_DIRECTORY);
     	sb.append(type);
     	sb.append(ThumbSize.getDir(size));
     	sb.append("/");
     	sb.append(name);
-    	return IOUtilities.getExternalFile(sb.toString());
+    	return sb.toString();
+    }
+    public static File getCacheFile(String type, int size, String name) {
+    	return IOUtilities.getExternalFile(getCacheFileName(type, size, name));
     }
 
+    public static FileInputStream getCacheFileInputStream(String type, int size, String name) {
+    	return IOUtilities.getExternalFileInputStream(getCacheFileName(type, size, name));
+    }
+    
+    public static boolean loadBitmap(ICoverArt cover, Bitmap bitmap, int thumbSize) {
+    	final FileInputStream albumCoverFileInputStream  = ImportUtilities.getCacheFileInputStream(MediaType.getArtFolder(cover.getMediaType()), thumbSize, Crc32.formatAsHexLowerCase(cover.getCrc()));
+    	if (albumCoverFileInputStream == null) {
+    		return false;
+    	}
+    	try {
+    		final byte[] buffer = thumbSize == ThumbSize.SMALL ? BUFFER_SMALL : BUFFER_MEDIUM;
+			albumCoverFileInputStream.read(buffer, 0, buffer.length);
+			bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(buffer)); 
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+    }
     
     public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, int thumbSize) {
     	Bitmap sizeToReturn = null;
@@ -83,12 +109,27 @@ public abstract class ImportUtilities {
     			// TODO: crop
     			Log.i(TAG, "Resizing to: " + uncroppedDim + " in order to fit into " + targetDim);
     			
-    			resized = Bitmap.createScaledBitmap(resizing, uncroppedDim.x, uncroppedDim.y, true);
-    			resized.compress(Bitmap.CompressFormat.JPEG, 85, new FileOutputStream(coverFile));
+				resized = Bitmap.createScaledBitmap(resizing, uncroppedDim.x, uncroppedDim.y, true);
+				final FileOutputStream fileOutStream = new FileOutputStream(coverFile);
+
+				ByteBuffer bitmapBuffer = ByteBuffer.allocate(resized.getRowBytes() * resized.getHeight());
+				resized.copyPixelsToBuffer(bitmapBuffer);
+				fileOutStream.write(bitmapBuffer.array());
+
+//				resized.compress(Bitmap.CompressFormat.JPEG, 85, new FileOutputStream(coverFile));
+
     			if (thumbSize == currentThumbSize) {
     				sizeToReturn = resized;
     			}
+    			
     		} catch (FileNotFoundException e) {
+    			e.printStackTrace();
+    			return null;
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    			return null;
+    		} catch (OutOfMemoryError  e) {
+    			e.printStackTrace();
     			return null;
     		} finally {
     			IOUtilities.closeStream(out);

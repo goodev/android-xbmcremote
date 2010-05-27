@@ -70,16 +70,9 @@ class DiskCacheThread extends AbstractThread {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
-					final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), thumbSize, Crc32.formatAsHexLowerCase(cover.getCrc()));
-				    if (file.exists()) {
-				    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-				    	if (bitmap == null) { // file is available but obviously corruped, so delete it.
-				    		file.delete();
-				    		response.value = null;
-				    	} else {
-				    		MemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
-				    		response.value = bitmap;
-				    	}
+					final Bitmap bitmap = Bitmap.createBitmap(ThumbSize.getPixel(thumbSize), ThumbSize.getPixel(thumbSize), Bitmap.Config.RGB_565);
+				    if (ImportUtilities.loadBitmap(cover, bitmap, thumbSize)) {
+				    	response.value = bitmap;
 				    }
 				}
 				done(controller, response);
