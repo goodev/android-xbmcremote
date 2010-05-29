@@ -267,9 +267,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 		positionYTmp = mPositionY;
 		flooredPositionYTmp = flooredPositionY;
-		Log.i(TAG, "positionYTmp = " + positionYTmp);
-		Log.i(TAG, "flooredPositionY = " + flooredPositionY);
-		Log.i(TAG, "mCacheSize = " + mCacheSize);
+//		Log.i(TAG, "positionYTmp = " + positionYTmp);
+//		Log.i(TAG, "flooredPositionY = " + flooredPositionY);
+//		Log.i(TAG, "mCacheSize = " + mCacheSize);
 		
 		/* draw each cover */
 		for (int i = 0; i < mCacheSize; i++) {
@@ -298,7 +298,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			
 			// grid position
 			gl.glTranslatef(x, y, 0.0f);
-			Log.i(TAG, i + " (" + x + ", " + y + ", 0), index = " + mNavItem[i].index + ", deltaToCenter = " + deltaToCenter);
+//			Log.i(TAG, i + " (" + x + ", " + y + ", 0), index = " + mNavItem[i].index + ", deltaToCenter = " + deltaToCenter);
 			// animation position
 			gl.glTranslatef(0, -(positionYTmp - flooredPositionYTmp) * 2.f, 0);
 
@@ -997,7 +997,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	private int mHeight = 0;
 	private boolean mIsChangingCat = false;
 
-	private float[] mEyeNormal = { 0.f, 0.f, -12f };
+	private float[] mEyeNormal = { 0.f, 0.f, -10.1f };
 //	private float[] mEyeNormal = { 0.f, 0.f, -6.25f };
 	private float[] mEyeClicked = { 0.f, // XX dont care
 			0.f, // XX dont care
