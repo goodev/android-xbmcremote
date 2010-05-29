@@ -96,6 +96,8 @@ class NavItemUtils {
 			final File f = ImportUtilities.getCacheFile(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long.parseLong(albumNavItem.albumKey)));
 			albumNavItem.cover = BitmapFactory.decodeFile(f.getAbsolutePath());
 			
+			return albumNavItem.cover != null;
+			
 //			final FileInputStream is = ImportUtilities.getCacheFileInputStream(MediaType.getArtFolder(MediaType.MUSIC), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(Long.parseLong(albumNavItem.albumKey)));
 //			if (is != null) {
 //				is.read(BUFFER, 0, BUFFER.length);
@@ -105,44 +107,44 @@ class NavItemUtils {
 //				Log.i(TAG, "Cannot find cover " + albumNavItem.albumKey);
 //			}
 
-			/** Get the path to the album art */
-			switch (theme) {
-			case Constants.THEME_NORMAL:
-				path = Constants.ROCKON_SMALL_ALBUM_ART_PATH + RockOnFileUtils.validateFileName(albumNavItem.albumId);
-				break;
-			case Constants.THEME_HALFTONE:
-				path = Constants.ROCKON_SMALL_ALBUM_ART_PATH + RockOnFileUtils.validateFileName(albumNavItem.albumId) + Constants.THEME_HALF_TONE_FILE_EXT;
-				break;
-			case Constants.THEME_EARTHQUAKE:
-				path = Constants.ROCKON_SMALL_ALBUM_ART_PATH + RockOnFileUtils.validateFileName(albumNavItem.albumId) + Constants.THEME_EARTHQUAKE_FILE_EXT;
-				break;
-			default:
-				path = Constants.ROCKON_SMALL_ALBUM_ART_PATH + RockOnFileUtils.validateFileName(albumNavItem.albumId);
-				break;
-			}
-
-			/** Access the file */
-			albumCoverFile = new File(path);
-			if (albumCoverFile.exists() && albumCoverFile.length() > 0) {
-			} else {
-				// Log.i(TAG, " - album cover bmp file has a problem "+path);
-				return false;
-			}
-
-			/** Read File and fill bitmap */
-			try {
-				FileInputStream albumCoverFileInputStream = new FileInputStream(albumCoverFile);
-				albumCoverFileInputStream.read(colorComponent, 0, colorComponent.length);
-				albumNavItem.cover.copyPixelsFromBuffer(ByteBuffer.wrap(colorComponent));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				return false;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return false;
-			}
-
-			return true;
+//			/** Get the path to the album art */
+//			switch (theme) {
+//			case Constants.THEME_NORMAL:
+//				path = Constants.ROCKON_SMALL_ALBUM_ART_PATH + RockOnFileUtils.validateFileName(albumNavItem.albumId);
+//				break;
+//			case Constants.THEME_HALFTONE:
+//				path = Constants.ROCKON_SMALL_ALBUM_ART_PATH + RockOnFileUtils.validateFileName(albumNavItem.albumId) + Constants.THEME_HALF_TONE_FILE_EXT;
+//				break;
+//			case Constants.THEME_EARTHQUAKE:
+//				path = Constants.ROCKON_SMALL_ALBUM_ART_PATH + RockOnFileUtils.validateFileName(albumNavItem.albumId) + Constants.THEME_EARTHQUAKE_FILE_EXT;
+//				break;
+//			default:
+//				path = Constants.ROCKON_SMALL_ALBUM_ART_PATH + RockOnFileUtils.validateFileName(albumNavItem.albumId);
+//				break;
+//			}
+//
+//			/** Access the file */
+//			albumCoverFile = new File(path);
+//			if (albumCoverFile.exists() && albumCoverFile.length() > 0) {
+//			} else {
+//				// Log.i(TAG, " - album cover bmp file has a problem "+path);
+//				return false;
+//			}
+//
+//			/** Read File and fill bitmap */
+//			try {
+//				FileInputStream albumCoverFileInputStream = new FileInputStream(albumCoverFile);
+//				albumCoverFileInputStream.read(colorComponent, 0, colorComponent.length);
+//				albumNavItem.cover.copyPixelsFromBuffer(ByteBuffer.wrap(colorComponent));
+//			} catch (FileNotFoundException e) {
+//				e.printStackTrace();
+//				return false;
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//				return false;
+//			}
+//
+//			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
