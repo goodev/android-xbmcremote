@@ -265,7 +265,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		gl.glFogf(GL10.GL_FOG_END, -mEyeZ + 11.f);
 		// gl.glDisable(GL10.GL_FOG);
 
-		positionYTmp = mPositionY;
+		positionYTmp = mPositionY / 3 * 2;
 		flooredPositionYTmp = flooredPositionY;
 //		Log.i(TAG, "positionYTmp = " + positionYTmp);
 //		Log.i(TAG, "flooredPositionY = " + flooredPositionY);
@@ -294,13 +294,14 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			 */
 //			float x = -1.f + i % 2 * 2.f;
 			float x = -2.f + i % 3 * 2.f;
-			float y = -4.f + deltaToCenter / 3 * 2.f;
+			float y = -6.f + deltaToCenter / 3 * 2.f;
 			
 			// grid position
 			gl.glTranslatef(x, y, 0.0f);
 //			Log.i(TAG, i + " (" + x + ", " + y + ", 0), index = " + mNavItem[i].index + ", deltaToCenter = " + deltaToCenter);
+			
 			// animation position
-			gl.glTranslatef(0, -(positionYTmp - flooredPositionYTmp) * 2.f, 0);
+			gl.glTranslatef(0, -(positionYTmp - flooredPositionYTmp) * 2.f - 2, 0);
 
 			mRockOnCover.setTextureId(mTextureId[i]);
 			mRockOnCover.draw(gl);
@@ -308,10 +309,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 		if (mTargetPositionY == mPositionY && !mClickAnimation && !texturesUpdated) {
 			// Log.i(TAG, "positions are not final!");
-			// Log.i(TAG,
-			// "mTargetPositionY: "+mTargetPositionY+" mPositionY: "+mPositionY);
-			// Log.i(TAG,
-			// "mTargetPositionX: "+mTargetPositionX+" mPositionX: "+mPositionX);
+			// Log.i(TAG, "mTargetPositionY: "+mTargetPositionY+" mPositionY: "+mPositionY);
+			// Log.i(TAG, "mTargetPositionX: "+mTargetPositionX+" mPositionX: "+mPositionX);
 			// Log.i(TAG, "mClickAnimation: "+mClickAnimation);
 			// Log.i(TAG, "texturesUpdated: "+texturesUpdated);
 			stopRender();
@@ -459,7 +458,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	private boolean updateTextures(GL10 gl) {
 		changed = false;
 		if (mCursor != null && !mCursor.isClosed()) {
-			// Log.i(TAG, " ++ updating textures");
+			Log.i(TAG, " ++ updating textures");
 			/* Album Cover textures in vertical scrolling */
 			for (int i = 0; i < mCacheSize; i++) {
 				// we try to minimize cache reshuffling to the max
@@ -472,10 +471,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 					albumIndexTmp -= mCacheSize;
 				}
 
-				// Log.i(TAG,
-				// "albumIndexTmp: "+albumIndexTmp+
-				// " flooredPositionY: "+flooredPositionY+
-				// " mPositionY: "+mPositionY);
+//				Log.i(TAG, "albumIndexTmp: " + albumIndexTmp + " flooredPositionY: " + flooredPositionY + " mPositionY: "+mPositionY);
 
 				if (setupAlbumTextures(gl, i, albumIndexTmp, mForceTextureUpdate))
 					changed = true;
@@ -597,10 +593,11 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
 
 		if (mSupportMipmapGeneration) {
-			gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR_MIPMAP_LINEAR);
+//			gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR_MIPMAP_LINEAR);
 			// GL10.GL_NEAREST);
 			// GL10.GL_LINEAR);
-			gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
+//			gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
+			gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_FALSE);
 		} else {
 			gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
 			// GL10.GL_LINEAR_MIPMAP_LINEAR);
