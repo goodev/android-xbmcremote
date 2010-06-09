@@ -301,7 +301,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 //			Log.i(TAG, i + " (" + x + ", " + y + ", 0), index = " + mNavItem[i].index + ", deltaToCenter = " + deltaToCenter);
 			
 			// animation position
-			gl.glTranslatef(0, -(positionYTmp - flooredPositionYTmp) * 2.f - 2, 0);
+			gl.glTranslatef(0, -(positionYTmp - flooredPositionYTmp) * 2.f - 2.f, 0);
 
 			mRockOnCover.setTextureId(mTextureId[i]);
 			mRockOnCover.draw(gl);
@@ -458,7 +458,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	private boolean updateTextures(GL10 gl) {
 		changed = false;
 		if (mCursor != null && !mCursor.isClosed()) {
-			Log.i(TAG, " ++ updating textures");
 			/* Album Cover textures in vertical scrolling */
 			for (int i = 0; i < mCacheSize; i++) {
 				// we try to minimize cache reshuffling to the max
@@ -535,6 +534,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 						mNavItem[cacheIndex].artistName = null;
 						mNavItem[cacheIndex].albumKey = null;
 					}
+					Log.i(TAG, "Loading bitmap, index = " + mNavItem[cacheIndex].index + ", navIndex = " + navIndex + ", cacheIndex = " + cacheIndex + " album name = " + mNavItem[cacheIndex].albumName);
 					if (!mNavItemUtils.fillAlbumBitmap(mNavItem[cacheIndex], mBitmapWidth, mBitmapHeight, mColorComponentBuffer, mTheme)) {
 						// Log.i(TAG, "BM failed, error loading bm");
 						try {
@@ -1037,7 +1037,10 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 class RockOnCover {
 
+	private static final String TAG = "RockOnCover";
+	
 	public RockOnCover() {
+		
 
 		/**
 		 * cover coordinates 
