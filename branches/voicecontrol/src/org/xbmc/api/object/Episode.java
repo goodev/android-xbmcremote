@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
-public class Episode implements ICoverArt {
+public class Episode implements ICoverArt, Comparable<Episode> {
 	
 	public final static String TAG = "Episode";
 	
@@ -120,5 +120,11 @@ public class Episode implements ICoverArt {
 	public String getPath() {
 		return localPath;
 	}
-	private static final long serialVersionUID = 5317212562013683169L;	
+	private static final long serialVersionUID = 5317212562013683169L;
+
+	public int compareTo(Episode another) {
+		if (this.season != another.season)
+			return ((Integer)this.season).compareTo(another.season);
+		return ((Integer)this.episode).compareTo(another.episode);
+	}	
 }

@@ -41,27 +41,32 @@
 			android:selectable="true"
 			android:enabled="true" android:defaultValue="false"/>
 	</PreferenceCategory>
-	<PreferenceCategory android:title="Home Screen Items">
+	<PreferenceCategory android:title="@string/prefs_home_title">
 		<CheckBoxPreference
 			android:key="setting_show_home_music"
-			android:title="Show Music"
-			android:summary="Show the &quot;Listen to Music&quot; item"
+			android:title="@string/prefs_home_music_title"
+			android:summary="@string/prefs_home_music_summary"
 			android:enabled="true" android:defaultValue="true" />
 		<CheckBoxPreference
 			android:key="setting_show_home_movies"
-			android:title="Show Movies"
-			android:summary="Show the &quot;Watch your Movies&quot; item"
+			android:title="@string/prefs_home_movies_title"
+			android:summary="@string/prefs_home_movies_summary"
 			android:enabled="true" android:defaultValue="true" />
 		<CheckBoxPreference
 			android:key="setting_show_home_tv"
-			android:title="Show TV Shows"
-			android:summary="Show the &quot;Watch your TV Shows&quot; item"
+			android:title="@string/prefs_home_tv_title"
+			android:summary="@string/prefs_home_tv_summary"
 			android:enabled="true" android:defaultValue="true" />
 		<CheckBoxPreference
 			android:key="setting_show_home_pictures"
-			android:title="Show Pictures"
-			android:summary="Show the &quot;Browse your Pictures&quot; item"
+			android:title="@string/prefs_home_pics_title"
+			android:summary="@string/prefs_home_pics_summary"
 			android:enabled="true" android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="setting_show_home_voice"
+			android:title="@string/prefs_home_voice_title"
+			android:summary="@string/prefs_home_voice_summary"
+			android:enabled="true" android:defaultValue="false" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Screen Behaviour">
 		<ListPreference
