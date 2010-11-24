@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.presentation.activity;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
@@ -44,6 +45,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -74,6 +76,13 @@ public class HomeActivity extends Activity {
 	public static final int MENU_COVER_DOWNLOAD_TVSHOWS = 45;
 	public static final int MENU_COVER_DOWNLOAD_TVSEASONS = 46;
 	
+	public static final int VOICE_RECOGNITION_REQUEST_CODE = 47;
+	
+	public static final int DIALOG_VOICE_CONTROL_NOT_SUPPORTED = 48;
+	public static final int DIALOG_VOICE_CONTROL_NO_RESULTS = 49;
+	public static final int DIALOG_VOICE_CONTROL_NO_UNWATCHED_EPISODES = 50;
+	public static final int DIALOG_VOICE_CONTROL_NO_EPISODES = 51;
+	
 	private ConfigurationManager mConfigurationManager;
 	private HomeController mHomeController;
 	
@@ -81,6 +90,8 @@ public class HomeActivity extends Activity {
 
 	private ProgressThread mProgressThread;
     private ProgressDialog mProgressDialog;
+    
+    private Bundle dialogData;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -181,49 +192,116 @@ public class HomeActivity extends Activity {
 	
 	@Override
 	public Dialog onCreateDialog(int id) {
-		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setMessage("");
-		mProgressDialog.setProgress(0);
-		mProgressDialog.setOnCancelListener(new OnCancelListener() {
-			public void onCancel(DialogInterface dialog) {
-				mProgressThread.cancel();
-			}
-		});
-		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		mProgressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-		return mProgressDialog;
+		switch (id) {
+			case DIALOG_VOICE_CONTROL_NOT_SUPPORTED:
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage(R.string.voice_control_not_supported_message);
+				builder.setOnCancelListener(new OnCancelListener() {
+					public void onCancel(DialogInterface dialog) {
+						dialog.dismiss();
+					}
+				});
+				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				return builder.create();
+			case DIALOG_VOICE_CONTROL_NO_RESULTS:
+			case DIALOG_VOICE_CONTROL_NO_UNWATCHED_EPISODES:
+			case DIALOG_VOICE_CONTROL_NO_EPISODES:
+				builder = new AlertDialog.Builder(this);
+				builder.setMessage("");
+				builder.setOnCancelListener(new OnCancelListener() {
+					public void onCancel(DialogInterface dialog) {
+						dialog.dismiss();
+					}
+				});
+				builder.setPositiveButton(R.string.voice_control_retry, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						mHomeController.startVoiceControlAction();
+					}
+				});
+				builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				return builder.create();
+			case MENU_COVER_DOWNLOAD_MOVIES:
+			case MENU_COVER_DOWNLOAD_MUSIC:
+			case MENU_COVER_DOWNLOAD_ACTORS:
+			case MENU_COVER_DOWNLOAD_TVSHOWS:
+			case MENU_COVER_DOWNLOAD_TVSEASONS:
+				mProgressDialog = new ProgressDialog(this);
+				mProgressDialog.setMessage("");
+				mProgressDialog.setProgress(0);
+				mProgressDialog.setOnCancelListener(new OnCancelListener() {
+					public void onCancel(DialogInterface dialog) {
+						mProgressThread.cancel();
+					}
+				});
+				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				mProgressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+				return mProgressDialog;
+			default:
+				Log.e(TAG, "Unknown dialog id: " + id);
+				throw new RuntimeException("Unknown dialog id: " + id);
+		}
 	}
 	
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
 		super.onPrepareDialog(id, dialog);
-		final ProgressDialog d = (ProgressDialog)dialog;
-		d.setProgress(0);
+		
+		ProgressDialog pd = null;
+		if (dialog instanceof ProgressDialog) {
+			pd = (ProgressDialog)dialog;
+			pd.setProgress(0);
+		}
+		AlertDialog ad = null;
+		if (dialog instanceof AlertDialog) {
+			ad = (AlertDialog)dialog;
+		}
+		
 		switch (id) {
+			case DIALOG_VOICE_CONTROL_NOT_SUPPORTED:
+				break;
+			case DIALOG_VOICE_CONTROL_NO_RESULTS:
+				ad.setMessage(getString(R.string.voice_control_no_results));
+				break;
+			case DIALOG_VOICE_CONTROL_NO_UNWATCHED_EPISODES:
+			case DIALOG_VOICE_CONTROL_NO_EPISODES:
+				ad.setMessage(dialogData.getString("message"));
+				break;
 			case MENU_COVER_DOWNLOAD_MOVIES:
-				d.setMessage("Downloading movie posters...");
-				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MOVIES, d);
+				pd.setMessage("Downloading movie posters...");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MOVIES, pd);
 	            break;
 			case MENU_COVER_DOWNLOAD_MUSIC:
-				d.setMessage("Downloading album covers...");
-				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MUSIC, d);
+				pd.setMessage("Downloading album covers...");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MUSIC, pd);
 				break;
 			case MENU_COVER_DOWNLOAD_ACTORS:
-				d.setMessage("Downloading actor thumbs...");
-				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_ACTORS, d);
+				pd.setMessage("Downloading actor thumbs...");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_ACTORS, pd);
 				break;
 			case MENU_COVER_DOWNLOAD_TVSHOWS:
-				d.setMessage("Downloading TV show banners.");
-				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_TVSHOWS, d);
+				pd.setMessage("Downloading TV show banners.");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_TVSHOWS, pd);
 				break;
 			case MENU_COVER_DOWNLOAD_TVSEASONS:
-				d.setMessage("Downloading TV season posters.");
-				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_TVSEASONS, d);
+				pd.setMessage("Downloading TV season posters.");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_TVSEASONS, pd);
 				break;
 			default:
-				return;
+				Log.e(TAG, "Unknown dialog id: " + id);
+				throw new RuntimeException("Unknown dialog id: " + id);
 		}
-		mProgressThread.start();
+		if (pd != null) {
+			mProgressThread.start();
+		}
 	}
 
 	@Override
@@ -280,4 +358,17 @@ public class HomeActivity extends Activity {
 			mHomeController.onHandleMessage(msg, mProgressDialog, mProgressThread);
 		}
 	};
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
+			ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+			mHomeController.onHandleVoiceResults(results);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	public void setDialogData(Bundle bundle) {
+		this.dialogData = bundle;
+	}
 }

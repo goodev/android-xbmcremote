@@ -29,6 +29,27 @@ If you are connecting through 3G please make sure that UDP port 9777 is forwarde
     <string name="setup_wizard_final_message">Everything worked. You can now finish the wizard and start using the remove.
 
 Have fun.</string>
+	<string name="voice_control_prompt">Speak the movie or TV show to play.</string>
+	<string name="voice_control_not_supported_message">Voice control is not supported on your device.</string>
+	<string name="voice_control_no_results">No results.</string>
+	<string name="voice_control_retry">Try again</string>
+	<string name="voice_control_processing">Processing...</string>
+	<string name="voice_control_choose_result">Choose a result</string>
+	<string name="voice_control_playing_tv_show">Playing %1$s s%2$se%3$s</string>
+	<string name="voice_control_no_unwatched_episodes">No unwatched episodes found for \'%1$s\'.</string>
+	<string name="voice_control_no_episodes">No episodes found for \'%1$s\'.</string>
+	<string name="voice_control_playing_movie">Playing %1$s</string>
+	<string name="prefs_home_title">Home Screen Items</string>
+	<string name="prefs_home_music_title">Show Music</string>
+	<string name="prefs_home_music_summary">Show the \"Listen to Music\" item</string>
+	<string name="prefs_home_movies_title">Show Movies</string>
+	<string name="prefs_home_movies_summary">Show the \"Watch your Movies\" item</string>
+	<string name="prefs_home_tv_title">Show TV Shows</string>
+	<string name="prefs_home_tv_summary">Show the \"Watch your TV Shows\" item</string>
+	<string name="prefs_home_pics_title">Show Pictures</string>
+	<string name="prefs_home_pics_summary">Show the \"Browse your Pictures\" item</string>
+	<string name="prefs_home_voice_title">Show Voice Control</string>
+	<string name="prefs_home_voice_summary">Show the \"Control with your Voice\" item (EXPERIMENTAL)</string>
     <string name="app_name">XBMC Remote</string>
 	<string name="app_receiver">XbmcBroadcastReceiver</string>
 	<string name="sms_received">SMS received</string>

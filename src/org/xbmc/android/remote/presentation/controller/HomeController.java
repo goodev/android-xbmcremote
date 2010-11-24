@@ -22,13 +22,18 @@
 package org.xbmc.android.remote.presentation.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TreeMap;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.business.VoiceProcessorThread;
 import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
@@ -40,10 +45,12 @@ import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.android.remote.presentation.activity.TvShowLibraryActivity;
 import org.xbmc.android.util.ClientFactory;
 import org.xbmc.android.util.ConnectionFactory;
+import org.xbmc.android.util.EditDistance;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.android.util.WifiHelper;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.INotifiableManager;
@@ -52,8 +59,10 @@ import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Album;
+import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.object.INamedResource;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
@@ -67,7 +76,10 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -75,6 +87,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,6 +113,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private static final int HOME_ACTION_RECONNECT = 5;
 	private static final int HOME_ACTION_WOL = 6;
 	private static final int HOME_ACTION_TVSHOWS = 7;
+	private static final int HOME_ACTION_VOICE = 8;
 	
 	
 	private IInfoManager mInfoManager;
@@ -119,10 +133,17 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private final HomeItem mHomeWol = new HomeItem(HOME_ACTION_WOL, R.drawable.icon_home_power, "Power On", "Turn your XBMC's");
 	
 	private final GridView mMenuGrid;
+	
+	private IControlManager mControlManager;
+	private ITvShowManager mTvManager;
+	private IVideoManager mVideoManager;
     
 	public HomeController(Activity activity, Handler handler, GridView menuGrid) {
 		super.onCreate(activity, handler);
 		mInfoManager = ManagerFactory.getInfoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
+		mTvManager = ManagerFactory.getTvManager(this);
+		mVideoManager = ManagerFactory.getVideoManager(HomeController.this);
 		mMenuGrid = menuGrid;
 		setupMenuItems(menuGrid);
 //		BroadcastListener bcl = BroadcastListener.getInstance(ConnectionManager.getHttpClient(this));
@@ -223,6 +244,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 			homeItems.add(new HomeItem(HOME_ACTION_TVSHOWS, R.drawable.icon_home_tv, "TV Shows", "Watch your"));
 		if (prefs.getBoolean("setting_show_home_pictures", true))
 			homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_home_picture, "Pictures", "Browse your"));
+		if (prefs.getBoolean("setting_show_home_voice", false))
+			homeItems.add(new HomeItem(HOME_ACTION_VOICE, R.drawable.icon_home_voice, "Voice", "Control with your"));
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_home_playing, "Now Playing", "See what's"));
 		homeItems.add(remote);
@@ -285,6 +308,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 						intent.putExtra(ListController.EXTRA_PATH, "");
 						mActivity.startActivity(intent);
 						break;
+					case HOME_ACTION_VOICE:
+						startVoiceControlAction();
+						break;
 					case HOME_ACTION_NOWPLAYING:
 						mActivity.startActivity(new Intent(v.getContext(), NowPlayingActivity.class));
 						break;
@@ -304,6 +330,124 @@ public class HomeController extends AbstractController implements INotifiableCon
 				}
 			}
 		};
+	}
+	
+	public void startVoiceControlAction() {
+		PackageManager pm = mActivity.getPackageManager();
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, mActivity.getString(R.string.voice_control_prompt));
+		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+		List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
+		if (activities.size() == 0) {
+			mActivity.showDialog(HomeActivity.DIALOG_VOICE_CONTROL_NOT_SUPPORTED);
+		} else {
+			mActivity.startActivityForResult(intent, HomeActivity.VOICE_RECOGNITION_REQUEST_CODE);
+		}
+	}
+	
+	public void onHandleVoiceResults(final ArrayList<String> speech) {
+		if (speech == null || speech.size() == 0) {
+			mActivity.showDialog(HomeActivity.DIALOG_VOICE_CONTROL_NO_RESULTS);
+		}
+		
+		final ProgressDialog progressDialog = ProgressDialog.show(mActivity, "", mActivity.getString(R.string.voice_control_processing), true);
+		final VoiceProcessorThread processor = new VoiceProcessorThread(mActivity, speech, mTvManager, mVideoManager, new Handler() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void handleMessage(Message msg) {
+				progressDialog.dismiss();
+				
+				final ArrayList<Object> results = (ArrayList<Object>) msg.getData().getSerializable(VoiceProcessorThread.RETURN_MESSAGE_RESULTS_KEY);
+				int size = (results == null ? 0 : results.size());
+				if (size == 0) {
+					mActivity.showDialog(HomeActivity.DIALOG_VOICE_CONTROL_NO_RESULTS);
+				} else if (size == 1) {
+					playTvShowOrMovie(results.get(0));
+				} else {
+					String[] items = new String[size];
+					for (int i = 0; i < size; i++) {
+						items[i] = ((INamedResource)results.get(i)).getShortName();
+					}
+					AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+					builder.setTitle(R.string.voice_control_choose_result);
+					builder.setItems(items, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							playTvShowOrMovie(results.get(which));
+						}
+					});
+					AlertDialog dialog = builder.create();
+					dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+					dialog.show();
+				}
+			}
+		});
+		processor.start();
+		progressDialog.setOnCancelListener(new OnCancelListener() {
+			public void onCancel(DialogInterface dialog) {
+				dialog.dismiss();
+				processor.interrupt();
+			}
+		});
+	}
+	
+	/**
+	 * Plays either a TvShow or a Movie. If it's a Movie, the movie is played.
+	 * If it's a TvShow, the first unwatched episode will play.
+	 * 
+	 * @param obj the video to play
+	 */
+	public void playTvShowOrMovie(Object obj) {
+		if (obj instanceof TvShow) {
+			final TvShow show = (TvShow)obj;
+			mTvManager.getEpisodes(new DataResponse<ArrayList<Episode>>() {
+				@Override
+				public void run() {
+					if (value.size() > 0) {
+						Collections.sort(value);
+						for (Episode episode : value) {
+							if (episode.numWatched == 0) {
+								String message = String.format(mActivity.getString(R.string.voice_control_playing_tv_show), show.getName(), episode.season, episode.episode);
+								Toast.makeText(mActivity, message, Toast.LENGTH_LONG).show();
+								mControlManager.playFile(new DataResponse<Boolean>() {
+									@Override
+									public void run() {
+										if (value) {
+											mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+										}
+									}
+								}, episode.getPath(), mActivity);
+								return;
+							}
+						}
+						Bundle data = new Bundle();
+						data.putString("message", String.format(mActivity.getString(R.string.voice_control_no_unwatched_episodes), show.getName()));
+						((HomeActivity)mActivity).setDialogData(data);
+						mActivity.showDialog(HomeActivity.DIALOG_VOICE_CONTROL_NO_UNWATCHED_EPISODES);
+					} else {
+						Bundle data = new Bundle();
+						data.putString("message", String.format(String.format(mActivity.getString(R.string.voice_control_no_episodes), show.getName())));
+						((HomeActivity)mActivity).setDialogData(data);
+						mActivity.showDialog(HomeActivity.DIALOG_VOICE_CONTROL_NO_EPISODES);
+					}
+				}
+			}, show, mActivity);
+		} else if (obj instanceof Movie) {
+			final Movie movie = (Movie)obj;
+			String message = String.format(mActivity.getString(R.string.voice_control_playing_movie), movie.getName());
+			Toast.makeText(mActivity, message, Toast.LENGTH_LONG).show();
+			mControlManager.playFile(new DataResponse<Boolean>() {
+				@Override
+				public void run() {
+					if (value) {
+						mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					}
+				}
+			}, movie.getPath(), mActivity);
+		} else {
+			Log.e(TAG, "Unknown type: " + obj.getClass().getName());
+			throw new RuntimeException("Trying to play an unknown type: " + obj.getClass().getName());
+		}
 	}
 	
 	public void update(Observable observable, Object data) {
@@ -562,7 +706,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals("setting_show_home_music") || key.equals("setting_show_home_movies") || key.equals("setting_show_home_tv") || key.equals("setting_show_home_pictures")) {
+		if (key.equals("setting_show_home_music") || key.equals("setting_show_home_movies") || key.equals("setting_show_home_tv") || key.equals("setting_show_home_pictures") || key.equals("setting_show_home_voice")) {
 			setupMenuItems(mMenuGrid);
 		}
 	}
