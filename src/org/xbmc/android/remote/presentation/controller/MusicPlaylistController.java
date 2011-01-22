@@ -28,6 +28,7 @@ import java.util.HashMap;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
+import org.xbmc.android.remote.presentation.activity.EditPlaylistActivity;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.android.util.ConnectionFactory;
@@ -43,6 +44,9 @@ import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.httpapi.client.MusicClient;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -51,6 +55,7 @@ import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +66,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 public class MusicPlaylistController extends ListController implements IController, Callback {
 	
@@ -68,6 +74,8 @@ public class MusicPlaylistController extends ListController implements IControll
 	
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_REMOVE = 2;
+	
+	public static final int MENU_EDIT_PLAYLIST = 1;
 	
 	public static final int MESSAGE_PLAYLIST_SIZE = 701;
 	public static final String BUNDLE_PLAYLIST_SIZE = "playlist_size";
@@ -84,6 +92,8 @@ public class MusicPlaylistController extends ListController implements IControll
 	private int mPlayListId = -1;
 	private int mCurrentPosition = -1;
 	private int mLastPosition = -1;
+	
+	private ArrayList<String> itemPaths;
 	
 	private static Bitmap sPlayingBitmap;
 	
@@ -103,44 +113,85 @@ public class MusicPlaylistController extends ListController implements IControll
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song_light);
 			sPlayingBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_play);
 			
-			mMusicManager.getPlaylistPosition(new DataResponse<Integer>() {
-				public void run() {
-					mCurrentPosition = value;
+			mList.setOnItemLongClickListener(new OnItemLongClickListener() {
+				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+					final PlaylistItem item = mSongAdapter.getItem(position);
+					builder.setTitle(item.getShortName());
+					builder.setItems(
+							new String[] {mActivity.getString(R.string.play_song), mActivity.getString(R.string.edit_playlist)},
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									switch (which) {
+										case 0:
+											playPlaylistItem(item);
+											break;
+										case 1:
+											editPlaylistItems();
+											break;
+										default:
+											Log.e(TAG, "Invalid dialog option: " + which);
+									}
+									dialog.dismiss();
+								}
+					});
+					builder.create().show();
+					return false;
 				}
-			}, mActivity.getApplicationContext());
-			
-			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
-	  	  		public void run() {
-	  	  			if (value.size() > 0) {
-		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
-		  	  			int i = 0;
-		  	  			for (String path : value) {
-		  	  				items.add(new PlaylistItem(path, i++));
-						}
-						setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
-						mSongAdapter = new SongAdapter(activity, items);
-						mList.setAdapter(mSongAdapter);
-						if (mCurrentPosition >= 0) {
-							mList.setSelection(mCurrentPosition);
-						}
-					} else {
-						setTitle("Music playlist");
-						setNoDataMessage("No tracks in playlist.", R.drawable.icon_playlist_dark);
-					}
-
-	  	  		}
-	  	  	}, mActivity.getApplicationContext());
+			});
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)view).position);
-					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
-					mMusicManager.setPlaylistSong(doNothing, item.position, mActivity.getApplicationContext());
+					playPlaylistItem((PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)view).position));
 				}
 			});
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
 			setTitle("Music playlist...");
+			reloadPlaylist();
 		}
+	}
+	
+	public void reloadPlaylist() {
+		mMusicManager.getPlaylistPosition(new DataResponse<Integer>() {
+			@Override
+			public void run() {
+				mCurrentPosition = value;
+			}
+		}, mActivity.getApplicationContext());
+		
+		mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
+  	  		@Override
+			public void run() {
+  	  			itemPaths = value;
+  	  			if (value.size() > 0) {
+	  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
+	  	  			int i = 0;
+	  	  			for (String path : value) {
+	  	  				items.add(new PlaylistItem(path, i++));
+					}
+					setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
+					mSongAdapter = new SongAdapter(mActivity, items);
+					mList.setAdapter(mSongAdapter);
+					if (mCurrentPosition >= 0) {
+						mList.setSelection(mCurrentPosition);
+					}
+				} else {
+					setTitle("Music playlist");
+					setNoDataMessage("No tracks in playlist.", R.drawable.icon_playlist_dark);
+				}
+  	  		}
+  	  	}, mActivity.getApplicationContext());
+	}
+	
+	private void playPlaylistItem(PlaylistItem item) {
+		final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
+		mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity);
+		mMusicManager.setPlaylistSong(doNothing, item.position, mActivity);
+	}
+	
+	private void editPlaylistItems() {
+		Intent intent = new Intent(mActivity, EditPlaylistActivity.class);
+		intent.putExtra(EditPlaylistActivity.EXTRA_PLAYLIST_ITEMS, itemPaths);
+		mActivity.startActivityForResult(intent, PlaylistActivity.EDIT_PLAYLIST_REQUEST_CODE);
 	}
 
 	/**
@@ -284,6 +335,22 @@ public class MusicPlaylistController extends ListController implements IControll
 		}
 	}
 	
+	@Override
+	public void onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MENU_EDIT_PLAYLIST, 0, mActivity.getString(R.string.edit_playlist)).setIcon(R.drawable.menu_song);
+	}
+
+	@Override
+	public void onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_EDIT_PLAYLIST:
+				editPlaylistItems();
+				break;
+			default:
+				Log.e(TAG, "Invalid item ID: " + item.getItemId());
+		}
+	}
+
 	private class SongAdapter extends ArrayAdapter<PlaylistItem> {
 		private final HashMap<Integer, OneLabelItemView> mItemPositions = new HashMap<Integer, OneLabelItemView>();
 		SongAdapter(Activity activity, ArrayList<PlaylistItem> items) {

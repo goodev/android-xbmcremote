@@ -55,4 +55,13 @@ Have fun.</string>
 	<string name="sms_received">SMS received</string>
 	<string name="alphabet">\u0020ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 	<string name="play_on_xbmc">Play on XBMC</string>
+	<string name="save">Save</string>
+	<string name="cancel">Cancel</string>
+	<string name="play_song">Play Song</string>
+	<string name="edit_playlist">Edit Playlist</string>
+	<plurals name="delete_selected_items">
+		<item quantity="one">Delete selected item</item>
+		<item quantity="other">Delete selected items (%d)</item>
+	</plurals>
+	<string name="processing">Processing. Please wait...</string>
 </resources>

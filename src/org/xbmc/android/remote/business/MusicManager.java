@@ -314,6 +314,18 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 			}
 		});
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addToPlaylist(final DataResponse<Boolean> response, final ArrayList<String> paths, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = music(context).addToPlaylist(MusicManager.this, paths);
+			}
+		});
+	}
 
 	/**
 	 * Adds a song to the current playlist. If the playlist is empty, the whole
@@ -402,6 +414,18 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
 				response.value = mc.addToPlaylist(MusicManager.this, artist, genre, getSortBy(SortType.ARTIST), getSortOrder());
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
+			}
+		});
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void clearPlaylist(final DataResponse<Boolean> response, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = music(context).clearPlaylist(MusicManager.this);
 			}
 		});
 	}

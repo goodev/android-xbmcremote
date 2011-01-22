@@ -134,6 +134,13 @@ public interface IMusicManager extends IManager {
 	 * @param album Song to add
 	 */
 	public void addToPlaylist(final DataResponse<Boolean> response, final Song song, final Context context);
+	
+	/**
+	 * Adds a song to the current playlist. Even if the playlist is empty, only this song will be added.
+	 * @param response Response object
+	 * @param path Path to add
+	 */
+	public void addToPlaylist(final DataResponse<Boolean> response, final ArrayList<String> path, final Context context);
 
 	/**
 	 * Adds a song to the current playlist. If the playlist is empty, the whole
@@ -174,6 +181,11 @@ public interface IMusicManager extends IManager {
 	 * @param position Position, starting with 0.
 	 */
 	public void setPlaylistSong(final DataResponse<Boolean> response, final int position, final Context context);
+	
+	/**
+	 * Removes all songs from the playlist.
+	 */
+	public void clearPlaylist(final DataResponse<Boolean> response, final Context context);
 
 	/**
 	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
