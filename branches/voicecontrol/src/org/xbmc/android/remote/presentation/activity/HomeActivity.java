@@ -30,6 +30,7 @@ import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.WifiHelper;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
@@ -41,10 +42,12 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Display;
@@ -155,6 +158,10 @@ public class HomeActivity extends Activity {
 			return true;
 		case MENU_EXIT:
 			Log.i(TAG, "Exiting XBMC Remote.");
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			if (prefs.getBoolean("setting_disable_wifi_on_exit", false)) {
+				WifiHelper.getInstance(this).enableWifi(false);
+			}
 			NowPlayingNotificationManager.getInstance(getBaseContext()).removeNotification();
 			android.os.Process.killProcess(android.os.Process.myPid());
 //			System.exit(0);

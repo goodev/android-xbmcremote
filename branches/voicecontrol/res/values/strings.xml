@@ -39,6 +39,8 @@ Have fun.</string>
 	<string name="voice_control_no_unwatched_episodes">No unwatched episodes found for \'%1$s\'.</string>
 	<string name="voice_control_no_episodes">No episodes found for \'%1$s\'.</string>
 	<string name="voice_control_playing_movie">Playing %1$s</string>
+	<string name="prefs_disable_wifi_title">Disable Wifi on Exit</string>
+	<string name="prefs_disable_wifi_summary">Turns off your device\'s wifi when the app is closed.</string>
 	<string name="prefs_home_title">Home Screen Items</string>
 	<string name="prefs_home_music_title">Show Music</string>
 	<string name="prefs_home_music_summary">Show the \"Listen to Music\" item</string>
