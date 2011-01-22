@@ -21,6 +21,11 @@
 			android:key="setting_vibrate_on_touch"
 			android:title="Vibrate on Touch"
 			android:summary="Makes the remote control vibrate on touch." android:defaultValue="true"/>
+		<CheckBoxPreference
+			android:key="setting_disable_wifi_on_exit"
+			android:title="@string/prefs_disable_wifi_title"
+			android:summary="@string/prefs_disable_wifi_summary"
+			android:enabled="true" android:defaultValue="false" />
 	</PreferenceCategory>
 	
 	<PreferenceCategory  android:title="On-Screen Notifications">
