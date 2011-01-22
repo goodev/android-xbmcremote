@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/org.xbmc.android.remote"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<LinearLayout
+		android:id="@+id/buttonbar"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentBottom="true"
+		style="@android:style/ButtonBar">
+		<Button
+			android:id="@+id/delete"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:visibility="gone" />
+		<Button 
+			android:text="@string/save" 
+			android:id="@+id/save"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1" />
+		<Button 
+			android:text="@string/cancel"
+			android:id="@+id/cancel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1" />
+	</LinearLayout>
+	<FrameLayout android:id="@+id/home_upper"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_above="@id/buttonbar">
+		<LinearLayout 
+			android:id="@+id/playlist_outer_layout"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" 
+			android:orientation="vertical">
+			<include layout="@layout/titlebar" />
+			<include layout="@layout/listmessage" />
+			<org.xbmc.android.widget.FastScrollView
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent">
+				<org.xbmc.android.remote.presentation.widget.DragAndDropListView
+					android:id="@+id/playlist_list"
+					android:layout_height="fill_parent"
+					android:layout_width="fill_parent"
+					android:layout_above="@id/buttonbar"
+					android:fadingEdge="none"
+					android:scrollbars="none" />
+			</org.xbmc.android.widget.FastScrollView>
+		</LinearLayout>
+	</FrameLayout>
+</RelativeLayout>

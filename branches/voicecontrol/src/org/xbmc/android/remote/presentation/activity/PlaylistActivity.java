@@ -51,6 +51,8 @@ import android.widget.TextView;
 public class PlaylistActivity extends Activity {
 
 	private MusicPlaylistController mMusicPlaylistController;
+	
+	public static final int EDIT_PLAYLIST_REQUEST_CODE = 1;
 
 	private ImageButton mPlayPauseView;
 	private TextView mLabel1;
@@ -193,6 +195,15 @@ public class PlaylistActivity extends Activity {
 		return true;
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if (requestCode == EDIT_PLAYLIST_REQUEST_CODE) {
+			mMusicPlaylistController.reloadPlaylist();
+		}
+	}
+
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		boolean handled = (mKeyTracker != null)?mKeyTracker.doKeyUp(keyCode, event):false;

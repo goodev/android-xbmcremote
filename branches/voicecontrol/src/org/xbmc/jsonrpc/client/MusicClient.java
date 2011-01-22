@@ -124,6 +124,19 @@ public class MusicClient extends Client implements IMusicClient {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	public boolean addToPlaylist(INotifiableManager manager, ArrayList<String> paths) {
+		boolean success = true;
+		for (String path : paths) {
+			if (mConnection.getBoolean(manager, "AddToPlayList", path + ";" + PLAYLIST_ID) == false) {
+				success = false;
+			}
+		}
+		return success;
+	}
+	
+	/**
 	 * Returns how many items are in the playlist.
 	 * @return Number of items in the playlist
 	 */

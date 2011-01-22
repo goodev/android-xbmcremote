@@ -89,6 +89,13 @@ public interface IMusicClient extends IClient {
 	public boolean addToPlaylist(INotifiableManager manager, Song song);
 	
 	/**
+	 * Adds a song to the current playlist.
+	 * @param path Path to add
+	 * @return True on success, false otherwise.
+	 */
+	public boolean addToPlaylist(INotifiableManager manager, ArrayList<String> paths);
+	
+	/**
 	 * Returns how many items are in the playlist.
 	 * @return Number of items in the playlist
 	 */

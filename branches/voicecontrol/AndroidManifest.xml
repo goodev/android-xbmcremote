@@ -25,6 +25,7 @@
 		<activity android:name=".presentation.activity.TvShowLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
 		<activity android:name=".presentation.activity.NowPlayingActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
 		<activity android:name=".presentation.activity.PlaylistActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
+		<activity android:name=".presentation.activity.EditPlaylistActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
 		<activity android:name=".presentation.activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"/>
 		<activity android:name=".presentation.activity.SettingsActivity" />
 		<activity android:name=".presentation.activity.HostSettingsActivity" />
