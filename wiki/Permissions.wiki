@@ -12,3 +12,4 @@ We don't like apps demanding permissions that don't seem obvious, so here we'll 
 ||_READ_SMS_||When displaying SMS, we actually display the first part of the message, so we'll need read permissions of SMS.||
 ||_WAKE_LOCK_, _DISABLE_KEYGUARD_||A requested feature was overwriting the power manager to keep the processor from sleeping or the screen from dimming. This is configurable, but we'll need the permissions in any case (activated or not).||
 ||_WRITE_EXTERNAL_STORAGE_||In order to save cover and poster thumbnails locally for caching purpose, we need write access to your SD card. This permission was introduced with Android 1.6.||
+||_RECEIVE_BOOT_COMPLETED_||Feature that makes the remote being launched at system bootup. The feature is optional and turned off by default.||
