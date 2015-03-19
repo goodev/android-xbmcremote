@@ -1,0 +1,3 @@
+The old download page can be found [here](http://code.google.com/p/android-xbmcremote/downloads/list?can=1&q=). For recent builds, please go to Android Market and search for "Official XBMC Remote". Or scan the QR Code below.
+
+![http://chart.apis.google.com/chart?cht=qr&chs=135x135&chl=market://details?id=org.xbmc.android.remote&.png](http://chart.apis.google.com/chart?cht=qr&chs=135x135&chl=market://details?id=org.xbmc.android.remote&.png)
